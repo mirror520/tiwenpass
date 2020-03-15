@@ -1,18 +1,22 @@
-import { formatDate } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as JsEncryptModule from 'jsencrypt';
 import { Observable } from 'rxjs';
+
+import { formatDate } from '@angular/common';
 import { map } from 'rxjs/operators';
 
-import { environment } from '../environments/environment';
-import { Result } from './model/result';
+import { environment } from '../../environments/environment';
+import { Result } from '../model/result';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RsaService {
-  private tiwengoBaseUrl = environment.tiwengoBaseUrl;
+  private static _todayPassColor: string;
+  private static _redirectUrl: string;
+
+  private baseUrl = environment.tiwengoBaseUrl;
 
   private jsEncrypt;
   private _privkey;
@@ -24,7 +28,7 @@ export class RsaService {
   getCiphertext(date: Date): Observable<Result<string>> {
     const dateStr = formatDate(date, 'yyyyMMdd', 'en');
 
-    return this.http.get(this.tiwengoBaseUrl + `/privkeys/${dateStr}/ciphertext`, {
+    return this.http.get(this.baseUrl + `/privkeys/${dateStr}/ciphertext`, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`)
     }).pipe(
       map((value: Result<string>) => Object.assign(new Result<string>(), value))
@@ -47,5 +51,19 @@ export class RsaService {
 
   get token(): string {
     return '';
+  }
+
+  public get todayPassColor(): string {
+    return RsaService._todayPassColor;
+  }
+  public set todayPassColor(value: string) {
+    RsaService._todayPassColor = value;
+  }
+
+  public get redirectUrl(): string {
+    return RsaService._redirectUrl;
+  }
+  public set redirectUrl(value: string) {
+    RsaService._redirectUrl = value;
   }
 }

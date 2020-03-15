@@ -1,1 +1,5 @@
-<p>scan works!</p>
+<zxing-scanner 
+  [formats]="['QR_CODE']"
+  (camerasFound)="camerasFoundHandler($event)"
+  (scanSuccess)="scanSuccessHandler($event)"
+></zxing-scanner>

@@ -1,1 +1,35 @@
-<p>login works!</p>
+<div class="login-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
+  <div class="logo-container" fxFlexAlign="center">
+    <app-tccg-logo></app-tccg-logo>
+  </div>
+  <mat-card fxFlexAlign="center">
+    <mat-tab-group dynamicHeight>
+      <mat-tab label="公務帳號">
+        <mat-card-content>
+          <form id="login-form" (keyup.enter)="login(account.value, password.value)">
+            <mat-form-field class="login-field">
+              <input #account matInput placeholder="公務帳號"/>
+              <span matSuffix>@taichung.gov.tw</span>
+            </mat-form-field>
+            <mat-form-field class="login-field">
+              <input #password matInput placeholder="密碼" [type]="hide ? 'password' : 'text'"/>
+              <mat-icon matSuffix (click)="hide = !hide">
+                {{ hide ? 'visibility_off' : 'visibility' }}
+              </mat-icon>
+              <mat-hint>提示：同開機密碼</mat-hint>
+            </mat-form-field>
+          </form>
+          <mat-error [textContent]="errorMessage"></mat-error>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" class="login-field" type="submit" 
+                  (click)="login(account.value, password.value)">
+            Login
+          </button>
+        </mat-card-actions>
+      </mat-tab>
+      <mat-tab label="洽公民眾">
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>
