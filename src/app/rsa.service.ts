@@ -5,19 +5,19 @@ import * as JsEncryptModule from 'jsencrypt';
   providedIn: 'root'
 })
 export class RsaService {
-  private encrypt;
+  private jsEncrypt;
   private _privkey;
 
   constructor() {
-    this.encrypt = new JsEncryptModule.JSEncrypt();
+    this.jsEncrypt = new JsEncryptModule.JSEncrypt();
   }
 
   decrypt(ciphertext: string): string {
-    return this.encrypt.decrypt(ciphertext);
+    return this.jsEncrypt.decrypt(ciphertext);
   }
 
   set privkey(value: string) {
-    this.encrypt.setPrivateKey(value);
+    this.jsEncrypt.setPrivateKey(value);
 
     this._privkey = value;
   }
