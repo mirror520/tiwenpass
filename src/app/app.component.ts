@@ -9,14 +9,18 @@ import { RsaService } from './rsa.service';
 export class AppComponent implements OnInit {
   title = '體溫通行';
 
-  private ciphertext: string;
+  private _ciphertext: string;
 
   constructor(
     private rsaService:RsaService
   ) { }
 
   ngOnInit() {
-    this.ciphertext = 'xLggOeWvscbC4s0e/0Pcxw99AWwx7dnni+Zb+/P0AvRZYap0KgvyhLAdOx1/M6gbscBI8XbdcQjdxzEQQoiEyQ==';
+    this.rsaService.getCiphertext(new Date()).subscribe({
+      next: (value) => this.ciphertext = value.data,
+      error: (err) => console.error(err),
+      complete: () => console.log('complete')
+    });
   }
 
   camerasFoundHandler(devices: MediaDeviceInfo[]) {
@@ -29,5 +33,15 @@ export class AppComponent implements OnInit {
 
     let color = this.rsaService.decrypt(this.ciphertext);
     console.log(color);
+  }
+
+  set ciphertext(value: string) {
+    console.log(value);
+
+    this._ciphertext = value;
+  }
+
+  get ciphertext(): string {
+    return this._ciphertext;
   }
 }
