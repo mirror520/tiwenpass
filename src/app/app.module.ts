@@ -6,12 +6,14 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { PassComponent } from './pass/pass.component';
 
 import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PassComponent
   ],
   imports: [
     BrowserModule,

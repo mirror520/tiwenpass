@@ -6,6 +6,7 @@ export const environment = {
   production: false,
 
   tiwengoBaseUrl: 'https://tiwengo.linyc.idv.tw',
+  tccgBaseUrl: 'https://api.secret.taichung.gov.tw',
 };
 
 /*
