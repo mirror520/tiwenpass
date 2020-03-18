@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
 import { RsaService } from '../rsa.service';
@@ -13,7 +14,8 @@ export class ScanComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private rsaService: RsaService
+    private rsaService: RsaService,
+    private snackBar: MatSnackBar,
   ) { }
 
   ngOnInit() {
@@ -30,7 +32,7 @@ export class ScanComponent implements OnInit {
 
   scanSuccessHandler(result: string) {
     this.rsaService.privkey = result;
-    console.log(result);
+    console.log(`已成功從伺服器取得密文: ${result}`);
 
     const color = this.rsaService.decrypt(this.ciphertext);
     if (color) {
@@ -39,6 +41,10 @@ export class ScanComponent implements OnInit {
   }
 
   decryptSuccessHandler(color: string) {
+    this.snackBar.open("成功解析出 QR Code", '確定', {
+      duration: 2000
+    });
+
     this.rsaService.todayPassColor = color;
     console.log(color);
 

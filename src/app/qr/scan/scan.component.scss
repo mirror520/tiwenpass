@@ -1,0 +1,13 @@
+@import '~@angular/material/theming';
+
+#toolbar {
+    @include mat-elevation(4);
+}
+
+.scan-page {
+    height: auto;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+}
+

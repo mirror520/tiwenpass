@@ -6,8 +6,8 @@ import { PassGuard } from './pass.guard';
 import { PassComponent } from './pass/pass.component';
 
 const routes: Routes = [
-    { path: '', component: PassComponent, canActivate: [AuthGuard] },
-    { path: 'pass', component: PassComponent, canActivate: [AuthGuard] },
+    { path: '', component: PassComponent, canActivate: [PassGuard] },
+    { path: 'pass', component: PassComponent, canActivate: [PassGuard] },
 ];
 
 @NgModule({

@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+
+import { AuthGuard } from '../auth.guard';
 import { ScanComponent } from './scan/scan.component';
 import { ShowComponent } from './show/show.component';
 
 const routes: Routes = [
-  { path: 'qr/scan', component: ScanComponent },
-  { path: 'qr/show', component: ShowComponent },
+  { path: 'qr/scan', component: ScanComponent, canActivate: [AuthGuard] },
+  { path: 'qr/show', component: ShowComponent, canActivate: [AuthGuard] },
 ]
 
 @NgModule({

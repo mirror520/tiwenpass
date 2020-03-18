@@ -1,7 +1,7 @@
 export class User {
     private _account: string;
-    private _password: string;
     private _name: string;
+    private _title: string;
 
     public get account(): string {
         return this._account;
@@ -10,17 +10,18 @@ export class User {
         this._account = value;
     }
 
-    public get password(): string {
-        return this._password;
-    }
-    public set password(value: string) {
-        this._password = value;
-    }
-
     public get name(): string {
         return this._name;
     }
     public set name(value: string) {
         this._name = value;
+    }
+
+    public get title(): string {
+        return this._title;
+    }
+
+    public set title(value: string) {
+        this._title = value;
     }
 }

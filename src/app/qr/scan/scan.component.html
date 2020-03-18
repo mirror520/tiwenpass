@@ -1,5 +1,16 @@
-<zxing-scanner 
-  [formats]="['QR_CODE']"
-  (camerasFound)="camerasFoundHandler($event)"
-  (scanSuccess)="scanSuccessHandler($event)"
-></zxing-scanner>
+<mat-toolbar id="toolbar" color="primary">
+  <span>請掃描附近的 QR Code 並調整對焦</span>
+</mat-toolbar>
+<div class="scan-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
+    <mat-card fxFlexAlign="center">
+        <mat-card-content>
+          <zxing-scanner 
+            [formats]="['QR_CODE']"
+            (camerasFound)="camerasFoundHandler($event)"
+            (scanSuccess)="scanSuccessHandler($event)"
+          ></zxing-scanner>
+        </mat-card-content>
+        <mat-card-actions>
+        </mat-card-actions>
+    </mat-card>
+</div>

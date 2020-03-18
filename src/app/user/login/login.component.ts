@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { UserService } from '../user.service';
-
 import { Result } from '../../model/result';
 import { User } from '../model/user';
 
@@ -15,9 +14,7 @@ import { User } from '../model/user';
 })
 export class LoginComponent {
   hide = true;
-  account: string;
-  password: string;
-  errorMessage: string;
+  tabGroupIndex = 1;
 
   constructor(
     private router: Router,
@@ -25,29 +22,27 @@ export class LoginComponent {
     private userService: UserService,
   ) {}
 
-  ngOnInit() {
-    this.errorMessage = '';
-  }
-
   login(account: string, password: string) {
+    console.log(`login user`);
+
     this.currentUser = null;
 
-    let result: Result<User> = this.userService.getMockUser(account, password);
-    this.loginResultHandler(result);
-
-    // this.userService.login(account, password)
-    //                 .subscribe({
-    //                   next: (value) => this.loginResultHandler(value),
-    //                   error: (error) => this.faultHandler(error)
-    //                 });
+    this.userService.login(account, password)
+                    .subscribe({
+                      next: (value) => this.loginResultHandler(value),
+                      error: (error) => this.faultHandler(error)
+                    });
   }
 
-  private loginResultHandler(result: Result<User>) {
-    const user: User = Object.assign(new User(), result.data);
-    const info = result.info[0];
+  loginGuest(name: string, phone: string, org: string, cause: string, respondent: string) {
+    console.log(`login guest`);
+  }
+
+  private loginResultHandler(result: User) {
+    const user: User = Object.assign(new User(), result);
     this.currentUser = user;
 
-    this.snackBar.open(info, '確定', {
+    this.snackBar.open("登入成功", '確定', {
       duration: 2000
     });
 
@@ -75,6 +70,10 @@ export class LoginComponent {
     this.snackBar.open(info, '確定', {
       duration: 2000
     });
+  }
+
+  selectedIndexChangeHandler(index: number) {
+    this.tabGroupIndex = index;
   }
 
   public get currentUser(): User {

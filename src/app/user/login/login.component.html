@@ -3,10 +3,11 @@
     <app-tccg-logo></app-tccg-logo>
   </div>
   <mat-card fxFlexAlign="center">
-    <mat-tab-group dynamicHeight>
-      <mat-tab label="公務帳號">
-        <mat-card-content>
-          <form id="login-form" (keyup.enter)="login(account.value, password.value)">
+    <mat-card-content>
+      <mat-tab-group #tabGroup dynamicHeight 
+                     (selectedIndexChange)="selectedIndexChangeHandler($event)">
+        <mat-tab label="公務帳號">
+          <form id="login-form">
             <mat-form-field class="login-field">
               <input #account matInput placeholder="公務帳號"/>
               <span matSuffix>@taichung.gov.tw</span>
@@ -19,17 +20,34 @@
               <mat-hint>提示：同開機密碼</mat-hint>
             </mat-form-field>
           </form>
-          <mat-error [textContent]="errorMessage"></mat-error>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button color="primary" class="login-field" type="submit" 
-                  (click)="login(account.value, password.value)">
-            Login
-          </button>
-        </mat-card-actions>
-      </mat-tab>
-      <mat-tab label="洽公民眾">
-      </mat-tab>
-    </mat-tab-group>
+        </mat-tab>
+        <mat-tab label="洽公訪客">
+          <form id="guest-login-form">
+            <mat-form-field class="login-field">
+              <input #name matInput placeholder="訪客姓名"/>
+            </mat-form-field>
+            <mat-form-field class="login-field">
+              <input #phone matInput placeholder="訪客電話"/>
+            </mat-form-field>
+            <mat-form-field class="login-field">
+              <input #org matInput placeholder="訪客服務單位"/>
+            </mat-form-field>
+            <mat-form-field class="login-field">
+              <input #cause matInput placeholder="事由"/>
+            </mat-form-field>
+            <mat-form-field class="login-field">
+              <input #respondent matInput placeholder="受訪者" value=""/>
+              <mat-hint>提示：受訪者單位/姓名/分機</mat-hint>
+            </mat-form-field>
+          </form>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" class="login-field" type="submit" 
+              (click)="login(account.value, password.value)">
+        Login
+      </button>
+    </mat-card-actions>
   </mat-card>
 </div>

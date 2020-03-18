@@ -1,6 +1,8 @@
 import { Component, ElementRef, AfterViewInit } from '@angular/core';
 
 import { RsaService } from '../qr/rsa.service';
+import { User } from '../user/model/user';
+import { UserService } from '../user/user.service';
 
 @Component({
   selector: 'app-pass',
@@ -12,6 +14,7 @@ export class PassComponent implements AfterViewInit {
   constructor(
     private elementRef: ElementRef,
     private rsaService: RsaService,
+    private userService: UserService,
   ) { }
 
   ngOnInit(): void {
@@ -19,5 +22,9 @@ export class PassComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = this.rsaService.todayPassColor;
+  }
+
+  public get user(): User {
+    return this.userService.currentUser;
   }
 }
