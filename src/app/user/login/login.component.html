@@ -6,14 +6,29 @@
     <mat-card-content>
       <mat-tab-group #tabGroup dynamicHeight 
                      (selectedIndexChange)="selectedIndexChangeHandler($event)">
-        <mat-tab label="公務帳號">
-          <form id="login-form">
+        <mat-tab label="洽公訪客">
+          <form class="login-form" [formGroup]="registerGuestUserFormGroup">
             <mat-form-field class="login-field">
-              <input #account matInput placeholder="公務帳號"/>
+              <input #name matInput placeholder="訪客姓名" formControlName="name"/>
+            </mat-form-field>
+            <mat-form-field class="login-field">
+              <mat-label>行動電話</mat-label>
+              <span matPrefix>+886 &nbsp;</span>
+              <input #phone matInput placeholder="0911111111" formControlName="phone"/>
+            </mat-form-field>
+            <ng-otp-input *ngIf="verify" [config]="config" 
+                          (onInputChange)="otpInputChangeHandler($event)"></ng-otp-input>
+          </form>
+        </mat-tab>
+        <mat-tab label="公務帳號">
+          <form class="login-form" [formGroup]="loginTccgUserFormGroup">
+            <mat-form-field class="login-field">
+              <input #account matInput placeholder="公務帳號" formControlName="account"/>
               <span matSuffix>@taichung.gov.tw</span>
             </mat-form-field>
             <mat-form-field class="login-field">
-              <input #password matInput placeholder="密碼" [type]="hide ? 'password' : 'text'"/>
+              <input #password matInput placeholder="密碼" formControlName="password"
+                     [type]="hide ? 'password' : 'text'"/>
               <mat-icon matSuffix (click)="hide = !hide">
                 {{ hide ? 'visibility_off' : 'visibility' }}
               </mat-icon>
@@ -21,32 +36,23 @@
             </mat-form-field>
           </form>
         </mat-tab>
-        <mat-tab label="洽公訪客">
-          <form id="guest-login-form">
-            <mat-form-field class="login-field">
-              <input #name matInput placeholder="訪客姓名"/>
-            </mat-form-field>
-            <mat-form-field class="login-field">
-              <input #phone matInput placeholder="訪客電話"/>
-            </mat-form-field>
-            <mat-form-field class="login-field">
-              <input #org matInput placeholder="訪客服務單位"/>
-            </mat-form-field>
-            <mat-form-field class="login-field">
-              <input #cause matInput placeholder="事由"/>
-            </mat-form-field>
-            <mat-form-field class="login-field">
-              <input #respondent matInput placeholder="受訪者" value=""/>
-              <mat-hint>提示：受訪者單位/姓名/分機</mat-hint>
-            </mat-form-field>
-          </form>
-        </mat-tab>
       </mat-tab-group>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary" class="login-field" type="submit" 
-              (click)="login(account.value, password.value)">
-        Login
+      <button *ngIf="verify" mat-raised-button color="primary" class="login-field"
+              [disabled]="(otp_ttl == 0) || (otp_code.length != 4)" 
+              (click)="verifyGuestUserPhoneOTP(otp_code)">
+        送出，剩餘 {{ otp_ttl }} 秒
+      </button>
+      <button *ngIf="!tabGroupIndex && !verify" mat-raised-button color="primary" class="login-field"
+              [disabled]="registerGuestUserFormGroup.invalid"
+              (click)="registerGuestUser(name.value, phone.value)">
+        驗證行動電話
+      </button>
+      <button *ngIf="tabGroupIndex" mat-raised-button color="primary" class="login-field" 
+              [disabled]="loginTccgUserFormGroup.invalid" 
+              (click)="loginTccgUser(account.value, password.value)">
+        登入公務帳號
       </button>
     </mat-card-actions>
   </mat-card>

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import * as JsEncryptModule from 'jsencrypt';
 import { Observable } from 'rxjs';
+import * as JsEncryptModule from 'jsencrypt';
 
 import { formatDate } from '@angular/common';
 import { map } from 'rxjs/operators';
@@ -16,7 +16,7 @@ export class RsaService {
   private static _todayPassColor: string;
   private static _redirectUrl: string;
 
-  private baseUrl = environment.tiwengoBaseUrl;
+  private baseUrl = environment.baseUrl;
 
   private jsEncrypt;
   private _privkey;
@@ -28,9 +28,13 @@ export class RsaService {
   getCiphertext(date: Date): Observable<Result<string>> {
     const dateStr = formatDate(date, 'yyyyMMdd', 'en');
 
-    return this.http.get(this.baseUrl + `/privkeys/${dateStr}/ciphertext`, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`)
-    }).pipe(
+    return this.http.get(this.baseUrl + `/privkeys/${dateStr}/ciphertext`).pipe(
+      map((value: Result<string>) => Object.assign(new Result<string>(), value))
+    );
+  }
+
+  getTodayPrivkey(): Observable<Result<string>> {
+    return this.http.get(this.baseUrl + '/api/v1/privkeys/today').pipe(
       map((value: Result<string>) => Object.assign(new Result<string>(), value))
     );
   }

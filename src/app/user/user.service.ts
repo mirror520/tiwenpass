@@ -4,7 +4,9 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
+import { Result } from '../model/result';
 import { User } from './model/user';
+import { Guest } from './model/guest';
 
 @Injectable({
   providedIn: 'root'
@@ -13,20 +15,56 @@ export class UserService {
   private static _currentUser: User;
   private static _redirectUrl: string;
 
-  private baseUrl = environment.tccgBaseUrl;
+  private baseUrl = environment.baseUrl;
 
   constructor(
     private http: HttpClient
   ) { }
 
-  login(account: string, password: string): Observable<User> {
+  loginTccgUser(account: string, password: string): Observable<Result<User>> {
     const params = {
       'account': account,
       'password': password
     };
 
-    return this.http.patch(this.baseUrl + '/v1.0/tccg/users/login', params).pipe(
-      map((value: User) => Object.assign(new User(), value))
+    return this.http.patch(this.baseUrl + '/api/v1/users/tccg/login', params).pipe(
+      map((value: Result<User>) => Object.assign(new Result<User>(), value))
+    );
+  }
+
+  registerGuestUser(name: string, phone: string): Observable<Result<User>> {
+    const params = {
+      'name': name,
+      'phone': phone
+    };
+
+    return this.http.post(this.baseUrl + '/api/v1/guests/register', params).pipe(
+      map((value: Result<User>) => Object.assign(new Result<User>(), value))
+    );
+  }
+
+  sendGuestPhoneOTP(user_id: number, phone: string): Observable<Result<Guest>> {
+    const params = {
+      'user_id': user_id,
+      'phone': phone
+    };
+
+    return this.http.patch(this.baseUrl + '/api/v1/guests/register/phone/otp', params).pipe(
+      map((value: Result<Guest>) => Object.assign(new Result<Guest>(), value))
+    );
+  }
+
+  verifyGuestUserPhoneOTP(guest: Guest): Observable<Result<Guest>> {
+    // const params = guest;
+    const params = {
+      'user_id': guest.user_id,
+      'phone': guest.phone,
+      'phone_otp': guest.phone_otp,
+      'phone_token': guest.phone_token
+    }
+
+    return this.http.patch(this.baseUrl + '/api/v1/guests/register/phone/otp/verify', params).pipe(
+      map((value: Result<Guest>) => Object.assign(new Result<Guest>(), value))
     );
   }
 

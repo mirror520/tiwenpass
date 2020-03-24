@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { NgOtpInputModule } from 'ng-otp-input';
 import { UserRoutingModule } from './user-routing.module';
 import { SvgModule } from '../svg/svg.module';
 
@@ -20,6 +21,7 @@ import { LoginComponent } from './login/login.component';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     FlexLayoutModule,
     MatButtonModule,
     MatCardModule,
@@ -27,6 +29,7 @@ import { LoginComponent } from './login/login.component';
     MatIconModule,
     MatTabsModule,
     MatSnackBarModule,
+    NgOtpInputModule,
     UserRoutingModule,
     SvgModule,
   ],

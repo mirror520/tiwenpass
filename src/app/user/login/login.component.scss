@@ -13,8 +13,13 @@
     width: 100%;
 }
 
-#login-form {
+.login-form {
     display: flex;
     flex-direction: column;
     margin: 10px 0;
+}
+
+.otp-field {
+    display: flex;
+    flex-direction: row;
 }

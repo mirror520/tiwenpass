@@ -25,7 +25,9 @@
     "@angular/service-worker": "~9.0.5",
     "@zxing/ngx-scanner": "^3.0.0",
     "jsencrypt": "^3.0.0-rc.1",
+    "ng-otp-input": "^1.7.0",
     "rxjs": "~6.5.4",
+    "taiwan-id-validator": "0.0.9",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
   },

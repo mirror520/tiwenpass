@@ -1,1 +1,12 @@
-<p>show works!</p>
+<mat-toolbar id="toolbar" color="primary">
+  <span>請將您的 QR Code 出示給附近人員掃描</span>
+</mat-toolbar>
+<div class="qrcode-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
+    <mat-card fxFlexAlign="center">
+        <mat-card-content>
+            <img class="qrcode-image" [src]="qrCodeImageUrl">
+        </mat-card-content>
+        <mat-card-actions>
+        </mat-card-actions>
+    </mat-card>
+</div>

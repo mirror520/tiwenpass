@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { isNationalIdentificationNumberValid } from 'taiwan-id-validator';
 
 import { RsaService } from '../rsa.service';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/model/user';
 
 @Component({
   selector: 'app-scan',
@@ -11,16 +13,18 @@ import { RsaService } from '../rsa.service';
 })
 export class ScanComponent implements OnInit {
   private _ciphertext: string;
+  
+  info: string;
 
   constructor(
-    private router: Router,
     private rsaService: RsaService,
+    private userService: UserService,
     private snackBar: MatSnackBar,
   ) { }
 
   ngOnInit() {
-    this.rsaService.getCiphertext(new Date()).subscribe({
-      next: (value) => this.ciphertext = value.data,
+    this.rsaService.getTodayPrivkey().subscribe({
+      next: (value) => this.rsaService.privkey = value.data,
       error: (err) => console.error(err),
       complete: () => console.log('complete')
     });
@@ -31,34 +35,33 @@ export class ScanComponent implements OnInit {
   }
 
   scanSuccessHandler(result: string) {
-    this.rsaService.privkey = result;
-    console.log(`已成功從伺服器取得密文: ${result}`);
+    this.ciphertext = result;
+    console.log(`已成功取得密文: ${result}`);
 
-    const color = this.rsaService.decrypt(this.ciphertext);
-    if (color) {
-      this.decryptSuccessHandler(color);
+    if (isNationalIdentificationNumberValid(result)) {
+      this.info = result;
+
+      this.snackBar.open(`成功解析出身分證`, '確定', {
+        duration: 2000
+      });
+    }
+
+    const user = this.rsaService.decrypt(this.ciphertext);
+    console.log(user);
+    if (user) {
+      this.decryptSuccessHandler(user)
     }
   }
 
-  decryptSuccessHandler(color: string) {
+  decryptSuccessHandler(user: string) {
+    this.info = user;
+
     this.snackBar.open("成功解析出 QR Code", '確定', {
       duration: 2000
     });
-
-    this.rsaService.todayPassColor = color;
-    console.log(color);
-
-    if (this.rsaService.redirectUrl != null) {
-      this.router.navigate([this.rsaService.redirectUrl]);
-      this.rsaService.redirectUrl = null;
-    } else {
-      this.router.navigate(['/pass'])
-    }
   }
 
   set ciphertext(value: string) {
-    console.log(value);
-
     this._ciphertext = value;
   }
 
@@ -71,5 +74,9 @@ export class ScanComponent implements OnInit {
   }
   public set todayPassColor(value: string) {
     this.rsaService.todayPassColor = value;
+  }
+
+  public get currentUser(): User {
+    return this.userService.currentUser;
   }
 }

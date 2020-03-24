@@ -5,12 +5,13 @@
     <mat-card fxFlexAlign="center">
         <mat-card-content>
           <zxing-scanner 
-            [formats]="['QR_CODE']"
+            [formats]="['CODE_128', 'QR_CODE']"
             (camerasFound)="camerasFoundHandler($event)"
             (scanSuccess)="scanSuccessHandler($event)"
           ></zxing-scanner>
         </mat-card-content>
         <mat-card-actions>
+          {{ currentUser.name }} 解析出 {{ info }}
         </mat-card-actions>
     </mat-card>
 </div>
