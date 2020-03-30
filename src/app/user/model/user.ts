@@ -1,5 +1,6 @@
 import { Employee } from './employee';
 import { Guest } from './guest';
+import { Token } from './token';
 
 export class User {
     private _id: number;
@@ -7,6 +8,7 @@ export class User {
     private _name: string;
     private _employee: Employee;
     private _guest: Guest;
+    private _token: Token;
 
     public get id(): number {
         return this._id;
@@ -47,5 +49,12 @@ export class User {
             this._guest = null;
 
         this._guest = Object.assign(new Guest(), value);
+    }
+
+    public get token(): Token {
+        return this._token;
+    }
+    public set token(value: Token) {
+        this._token = Object.assign(new Token(), value);
     }
 }

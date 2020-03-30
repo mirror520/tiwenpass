@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { Result } from '../model/result';
 import { User } from './model/user';
 import { Guest } from './model/guest';
+import { Token } from './model/token';
 
 @Injectable({
   providedIn: 'root'
@@ -23,12 +24,33 @@ export class UserService {
 
   loginTccgUser(account: string, password: string): Observable<Result<User>> {
     const params = {
-      'account': account,
-      'password': password
+      'username': account,
+      'password': password,
+      'type': 0
     };
 
     return this.http.patch(this.baseUrl + '/api/v1/users/tccg/login', params).pipe(
       map((value: Result<User>) => Object.assign(new Result<User>(), value))
+    );
+  }
+
+  loginGuestUser(phone: string, phone_token: string): Observable<Result<User>> {
+    const params = {
+      'username': phone,
+      'password': phone_token,
+      'type': 1
+    };
+
+    return this.http.patch(this.baseUrl + '/api/v1/guests/login', params).pipe(
+      map((value: Result<User>) => Object.assign(new Result<User>(), value))
+    );
+  }
+
+  refreshToken(): Observable<Result<Token>> {
+    return this.http.patch(this.baseUrl + '/api/v1/auth/refresh_token', {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.token.token}`)
+    }).pipe(
+      map((value: Result<Token>) => Object.assign(new Result<Token>(), value))
     );
   }
 
@@ -73,6 +95,13 @@ export class UserService {
   }
   public set currentUser(value: User) {
     UserService._currentUser = value;
+  }
+
+  public get token(): Token {
+    return this.currentUser.token;
+  }
+  public set token(value: Token) {
+    this.currentUser.token = value;
   }
 
   public get redirectUrl(): string {

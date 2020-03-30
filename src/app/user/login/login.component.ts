@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { timer } from 'rxjs';
 import { map, takeWhile } from 'rxjs/operators';
@@ -10,6 +11,7 @@ import { UserService } from '../user.service';
 import { Result } from '../../model/result';
 import { User } from '../model/user';
 import { Guest } from '../model/guest';
+import { DuplicateVerificationDialogComponent } from './duplicate-verification-dialog/duplicate-verification-dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -38,6 +40,7 @@ export class LoginComponent implements OnInit {
   registerGuestUserFormGroup: FormGroup;
 
   constructor(
+    private dialog: MatDialog,
     private formBuilder: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
@@ -78,13 +81,23 @@ export class LoginComponent implements OnInit {
                     });
   }
 
+  loginGuestUser(phone: string, phone_token: string) {
+    this.currentUser = null;
+
+    this.userService.loginGuestUser(phone, phone_token)
+                    .subscribe({
+                      next: (value) => this.loginGuestUserResultHandler(value),
+                      error: (error) => this.faultHandler(error)
+                    });
+  }
+
   registerGuestUser(name: string, phone: string) {
     this.currentUser = null;
 
     this.userService.registerGuestUser(name, phone)
                     .subscribe({
                       next: (value) => this.registerGuestUserResultHandler(value),
-                      error: (error) => this.faultHandler(error)
+                      error: (error) => this.registerGuestUserFaultHandler(error)
                     });
   }
 
@@ -123,6 +136,22 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/qr/scan']);
     }
   }
+  private loginGuestUserResultHandler(result: Result<User>) {
+    const user: User = Object.assign(new User(), result.data);
+    const info = result.info[0];
+    this.currentUser = user;
+
+    this.snackBar.open(info, '確定', {
+      duration: 2000
+    });
+
+    if (this.userService.redirectUrl != null) {
+      this.router.navigate([this.userService.redirectUrl]);
+      this.userService.redirectUrl = null;
+    } else {
+      this.router.navigate(['/qr/show']);
+    }
+  }
 
   private registerGuestUserResultHandler(result: Result<User>) {
     const user: User = Object.assign(new User(), result.data);
@@ -143,6 +172,49 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  private registerGuestUserFaultHandler(error: HttpErrorResponse) {
+    const failureResult = Object.assign(new Result(), error.error);
+    const info = failureResult.info[0];
+    const user: User = Object.assign(new User(), failureResult.data)
+    this.currentUser = user;
+
+    if (error.status === 401) {
+      this.userService.sendGuestPhoneOTP(user.id, user.guest.phone)
+                      .subscribe({
+                        next: (value) => this.sendGuestPhoneOTPResultHandler(value),
+                        error: (error) => this.faultHandler(error)
+                      });
+
+      this.registerGuestUserFormGroup.get("name").disable()
+      this.registerGuestUserFormGroup.get("phone").disable()
+
+      this.snackBar.open(info, '確定', {
+        duration: 2000
+      });
+    }
+
+    if (error.status === 409) {
+      this.registerGuestUserFormGroup.get("name").disable()
+      this.registerGuestUserFormGroup.get("phone").disable()
+      
+      const dialogRef = this.dialog.open(DuplicateVerificationDialogComponent, {
+        width: '80%',
+        maxWidth: '600px',
+        data: user
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.userService.sendGuestPhoneOTP(user.id, user.guest.phone)
+                          .subscribe({
+                            next: (value) => this.sendGuestPhoneOTPResultHandler(value),
+                            error: (error) => this.faultHandler(error)
+                          });
+        }
+      });
+    }
+  }
+
   private sendGuestPhoneOTPResultHandler(result: Result<Guest>) {
     const guest: Guest = Object.assign(new Guest(), result.data);
     const info = result.info[0];
@@ -156,10 +228,6 @@ export class LoginComponent implements OnInit {
       takeWhile(() => this.otp_ttl > 0),
       map(() => this.otp_ttl--)
     ).subscribe(() => console.log(this.otp_ttl));
-
-    this.snackBar.open(info, '確定', {
-      duration: 2000
-    });
   }
 
   private verifyGuestUserPhoneOTPResultHandler(result: Result<Guest>) {
@@ -171,21 +239,13 @@ export class LoginComponent implements OnInit {
       duration: 2000
     });
 
-    if (this.userService.redirectUrl != null) {
-      this.router.navigate([this.userService.redirectUrl]);
-      this.userService.redirectUrl = null;
-    } else {
-      this.router.navigate(['/qr/show']);
-    }
+    this.loginGuestUser(guest.phone, guest.phone_token);
   }
+
 
   private faultHandler(error: HttpErrorResponse) {
     let failureResult: Result<User>;
     let info = error.statusText;
-
-    if (error.status === 401) {
-      info = error.error;
-    }
 
     if (error.status === 422) {
       failureResult = Object.assign(new Result(), error.error);

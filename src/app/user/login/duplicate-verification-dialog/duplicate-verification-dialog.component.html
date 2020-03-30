@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>{{ data.name }} 您好</h1>
+<div mat-dialog-content>
+  <p>您已經驗證過了，是否需要再次驗證?</p>
+  <span style="color: #ff0000">提醒：您可使用先前的驗證簡訊再次登入</span>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false">不用</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>好</button>
+</div>

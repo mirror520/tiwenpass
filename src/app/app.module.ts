@@ -12,14 +12,12 @@ import { QrModule } from './qr/qr.module';
 import { UserModule } from './user/user.module';
 
 import { AppComponent } from './app.component';
-import { PassComponent } from './pass/pass.component';
 
 import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PassComponent,
   ],
   imports: [
     BrowserAnimationsModule,

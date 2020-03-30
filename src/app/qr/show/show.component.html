@@ -4,7 +4,7 @@
 <div class="qrcode-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
     <mat-card fxFlexAlign="center">
         <mat-card-content>
-            <img class="qrcode-image" [src]="qrCodeImageUrl">
+            <img class="qrcode-image" [src]="qrCodeImageUrl | async">
         </mat-card-content>
         <mat-card-actions>
         </mat-card-actions>

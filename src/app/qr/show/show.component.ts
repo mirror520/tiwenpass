@@ -1,29 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { User } from 'src/app/user/model/user';
-import { UserService } from 'src/app/user/user.service';
+import { Component } from '@angular/core';
+import { SafeUrl } from '@angular/platform-browser';
 
-import { environment } from '../../../environments/environment';
+import { RsaService } from '../rsa.service';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/model/user';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-show',
   templateUrl: './show.component.html',
   styleUrls: ['./show.component.scss']
 })
-export class ShowComponent implements OnInit {
-  _qrCodeImageUrl = "";
-
-  private baseUrl = environment.baseUrl;
-
+export class ShowComponent {
   constructor(
+    private rsaService: RsaService,
     private userService: UserService
   ) { }
 
-  ngOnInit(): void {
-  }
-
-  get qrCodeImageUrl(): string {
-    return `${this.baseUrl}/api/v1/guests/${this.currentUser.id}/qr`;
-  }
+  qrCodeImageUrl: Observable<SafeUrl> = this.rsaService.getGuestUserQRCode(this.currentUser.id);
 
   get currentUser(): User {
     return this.userService.currentUser;
