@@ -3,6 +3,7 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Rout
 import { Observable } from 'rxjs';
 
 import { UserService } from './user/user.service';
+import { UserType } from './user/model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +17,9 @@ export class AuthGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    
-    if (!this.userService.currentUser) {
+
+    const currentUser = this.userService.currentUser;
+    if (!currentUser) {
       console.log('必須先登入使用者');
 
       this.userService.redirectUrl = state.url;
@@ -25,6 +27,12 @@ export class AuthGuard implements CanActivate {
 
       return false;
     }
+
+    if (state.url === '/qr/scan')
+      return currentUser.type == UserType.Employee;
+
+    if (state.url === '/qr/show')
+      return currentUser.type == UserType.Guest;
 
     return true;
   }

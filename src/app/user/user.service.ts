@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { Result } from '../model/result';
-import { User } from './model/user';
+import { User, UserType } from './model/user';
 import { Guest } from './model/guest';
 import { Token } from './model/token';
 
@@ -26,7 +26,7 @@ export class UserService {
     const params = {
       'username': account,
       'password': password,
-      'type': 0
+      'type': UserType.Employee
     };
 
     return this.http.patch(this.baseUrl + '/api/v1/users/tccg/login', params).pipe(
@@ -38,7 +38,7 @@ export class UserService {
     const params = {
       'username': phone,
       'password': phone_token,
-      'type': 1
+      'type': UserType.Guest
     };
 
     return this.http.patch(this.baseUrl + '/api/v1/guests/login', params).pipe(

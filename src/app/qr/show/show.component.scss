@@ -2,6 +2,7 @@
 
 #toolbar {
     @include mat-elevation(4);
+    height: 10vh;
 }
 
 .qrcode-page {
@@ -14,4 +15,8 @@
 .qrcode-image {
     width: 100%;
     max-width: 800px;
+}
+
+.toolbar-text {
+    font-size: 5vmin;
 }

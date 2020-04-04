@@ -5,6 +5,7 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { QrRoutingModule } from './qr-routing.module';
 
 import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
@@ -19,6 +20,7 @@ import { ShowComponent } from './show/show.component';
     ZXingScannerModule,
     QrRoutingModule,
     MatCardModule,
+    MatSelectModule,
     MatSnackBarModule,
     MatToolbarModule,
   ]

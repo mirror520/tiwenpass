@@ -2,10 +2,16 @@ import { Employee } from './employee';
 import { Guest } from './guest';
 import { Token } from './token';
 
+export enum UserType {
+    Employee = 0,
+    Guest = 1
+}
+
 export class User {
     private _id: number;
     private _username: string;
     private _name: string;
+    private _type: UserType;
     private _employee: Employee;
     private _guest: Guest;
     private _token: Token;
@@ -29,6 +35,13 @@ export class User {
     }
     public set name(value: string) {
         this._name = value;
+    }
+
+    public get type(): UserType {
+        return this._type;
+    }
+    public set type(value: UserType) {
+        this._type = value;
     }
 
     public get employee(): Employee {

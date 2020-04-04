@@ -1,10 +1,11 @@
 <div class="login-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
   <div class="logo-container" fxFlexAlign="center">
     <app-tccg-logo></app-tccg-logo>
+    <span>防疫追蹤溯源實名登記</span>
   </div>
   <mat-card fxFlexAlign="center">
     <mat-card-content>
-      <mat-tab-group #tabGroup dynamicHeight 
+      <mat-tab-group #tabGroup dynamicHeight mat-align-tabs="center"
                      (selectedIndexChange)="selectedIndexChangeHandler($event)">
         <mat-tab label="洽公訪客">
           <form class="login-form" [formGroup]="registerGuestUserFormGroup">
@@ -14,13 +15,13 @@
             <mat-form-field class="login-field">
               <mat-label>行動電話</mat-label>
               <span matPrefix>+886 &nbsp;</span>
-              <input #phone matInput placeholder="0911111111" formControlName="phone"/>
+              <input #phone matInput type="number" placeholder="0911111111" formControlName="phone"/>
             </mat-form-field>
-            <ng-otp-input *ngIf="verify" [config]="config" 
+            <ng-otp-input *ngIf="verify" [config]="config" class="otp-field"
                           (onInputChange)="otpInputChangeHandler($event)"></ng-otp-input>
           </form>
         </mat-tab>
-        <mat-tab label="公務帳號">
+        <mat-tab label="公務帳號" [disabled]="verify">
           <form class="login-form" [formGroup]="loginTccgUserFormGroup">
             <mat-form-field class="login-field">
               <input #account matInput placeholder="公務帳號" formControlName="account"/>

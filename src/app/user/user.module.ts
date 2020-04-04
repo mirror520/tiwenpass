@@ -15,11 +15,13 @@ import { SvgModule } from '../svg/svg.module';
 
 import { LoginComponent } from './login/login.component';
 import { DuplicateVerificationDialogComponent } from './login/duplicate-verification-dialog/duplicate-verification-dialog.component';
+import { GuestLoginComponent } from './guest-login/guest-login.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
-    DuplicateVerificationDialogComponent, 
+    DuplicateVerificationDialogComponent,
+    GuestLoginComponent, 
   ],
   imports: [
     CommonModule,

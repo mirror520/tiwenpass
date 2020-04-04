@@ -1,8 +1,11 @@
+import { Department } from './department';
+
 export class Employee {
     private _user_id: number;
     private _name: string;
     private _account: string;
     private _title: string;
+    private _departments: Department[];
 
     public get user_id(): number {
         return this._user_id;
@@ -30,5 +33,23 @@ export class Employee {
     }
     public set title(value: string) {
         this._title = value;
+    }
+
+    public get departments(): Department[] {
+        return this._departments;
+    }
+    public set departments(value: Department[]) {
+        const departments: Department[] = new Array();
+        if (value != null) {
+            for (const department of value) {
+                departments.push(Object.assign(new Department(), department));
+            }
+        }
+
+        this._departments = departments;
+    }
+
+    public currentDepartment(): Department {
+        return this._departments[this._departments.length-1];
     }
 }

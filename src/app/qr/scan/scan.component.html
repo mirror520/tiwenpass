@@ -1,5 +1,11 @@
 <mat-toolbar id="toolbar" color="primary">
-  <span>請掃描附近的 QR Code 並調整對焦</span>
+  <mat-form-field>
+    <mat-select placeholder="特定地點" [(value)]="currentLocation">
+      <mat-option *ngFor="let location of locations | async" [value]="location">
+        {{ location.location }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </mat-toolbar>
 <div class="scan-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
     <mat-card fxFlexAlign="center">
@@ -11,7 +17,7 @@
           ></zxing-scanner>
         </mat-card-content>
         <mat-card-actions>
-          {{ currentUser.name }} 解析出 {{ info }}
+          {{ info }}
         </mat-card-actions>
     </mat-card>
 </div>

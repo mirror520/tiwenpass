@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { timer } from 'rxjs';
@@ -28,11 +28,11 @@ export class LoginComponent implements OnInit {
     allowNumbersOnly: true,
     length: 4,
     isPasswordInput: false,
-    disableAutoFocus: false,
+    disableAutoFocus: true,
     placeholder:'',
     inputStyles: {
-      'width': '50px',
-      'height': '50px'
+      'width': '40px',
+      'height': '40px'
     }
   };
 
@@ -40,12 +40,20 @@ export class LoginComponent implements OnInit {
   registerGuestUserFormGroup: FormGroup;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private dialog: MatDialog,
     private formBuilder: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
     private userService: UserService,
-  ) {}
+  ) {
+    this.activatedRoute.queryParams.subscribe(params => {
+      let token = params['t'];
+      if (token) {
+        this.router.navigate(['/login/guest'], { queryParams: { t: token } });
+      }
+    });
+  }
 
   ngOnInit() {
     this.loginTccgUserFormGroup = this.formBuilder.group({
@@ -101,6 +109,17 @@ export class LoginComponent implements OnInit {
                     });
   }
 
+  sendGuestPhoneOTP(user_id: number, phone: string) {
+    this.userService.sendGuestPhoneOTP(user_id, phone)
+                    .subscribe({
+                      next: (value) => this.sendGuestPhoneOTPResultHandler(value),
+                      error: (error) => this.faultHandler(error)
+                    });
+
+    this.registerGuestUserFormGroup.get("name").disable();
+    this.registerGuestUserFormGroup.get("phone").disable();
+  }
+
   verifyGuestUserPhoneOTP(value: string) {
     const guest = this.currentUser.guest;
     guest.phone_otp = value;
@@ -130,12 +149,14 @@ export class LoginComponent implements OnInit {
     });
 
     if (this.userService.redirectUrl != null) {
-      this.router.navigate([this.userService.redirectUrl]);
+      // this.router.navigate([this.userService.redirectUrl]);
       this.userService.redirectUrl = null;
+      this.router.navigate(['/qr/scan']);
     } else {
       this.router.navigate(['/qr/scan']);
     }
   }
+
   private loginGuestUserResultHandler(result: Result<User>) {
     const user: User = Object.assign(new User(), result.data);
     const info = result.info[0];
@@ -146,8 +167,9 @@ export class LoginComponent implements OnInit {
     });
 
     if (this.userService.redirectUrl != null) {
-      this.router.navigate([this.userService.redirectUrl]);
+      // this.router.navigate([this.userService.redirectUrl]);
       this.userService.redirectUrl = null;
+      this.router.navigate(['/qr/show']);
     } else {
       this.router.navigate(['/qr/show']);
     }
@@ -158,14 +180,7 @@ export class LoginComponent implements OnInit {
     const info = result.info[0];
     this.currentUser = user;
 
-    this.userService.sendGuestPhoneOTP(user.id, user.guest.phone)
-                    .subscribe({
-                      next: (value) => this.sendGuestPhoneOTPResultHandler(value),
-                      error: (error) => this.faultHandler(error)
-                    });
-
-    this.registerGuestUserFormGroup.get("name").disable()
-    this.registerGuestUserFormGroup.get("phone").disable()
+    this.sendGuestPhoneOTP(user.id, user.guest.phone);
 
     this.snackBar.open(info, '確定', {
       duration: 2000
@@ -179,14 +194,7 @@ export class LoginComponent implements OnInit {
     this.currentUser = user;
 
     if (error.status === 401) {
-      this.userService.sendGuestPhoneOTP(user.id, user.guest.phone)
-                      .subscribe({
-                        next: (value) => this.sendGuestPhoneOTPResultHandler(value),
-                        error: (error) => this.faultHandler(error)
-                      });
-
-      this.registerGuestUserFormGroup.get("name").disable()
-      this.registerGuestUserFormGroup.get("phone").disable()
+      this.sendGuestPhoneOTP(user.id, user.guest.phone);
 
       this.snackBar.open(info, '確定', {
         duration: 2000
@@ -194,9 +202,6 @@ export class LoginComponent implements OnInit {
     }
 
     if (error.status === 409) {
-      this.registerGuestUserFormGroup.get("name").disable()
-      this.registerGuestUserFormGroup.get("phone").disable()
-      
       const dialogRef = this.dialog.open(DuplicateVerificationDialogComponent, {
         width: '80%',
         maxWidth: '600px',
@@ -205,11 +210,7 @@ export class LoginComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.userService.sendGuestPhoneOTP(user.id, user.guest.phone)
-                          .subscribe({
-                            next: (value) => this.sendGuestPhoneOTPResultHandler(value),
-                            error: (error) => this.faultHandler(error)
-                          });
+          this.sendGuestPhoneOTP(user.id, user.guest.phone);
         }
       });
     }
@@ -217,7 +218,6 @@ export class LoginComponent implements OnInit {
 
   private sendGuestPhoneOTPResultHandler(result: Result<Guest>) {
     const guest: Guest = Object.assign(new Guest(), result.data);
-    const info = result.info[0];
     this.currentUser.guest = guest;
 
     this.verify = true;
@@ -227,7 +227,15 @@ export class LoginComponent implements OnInit {
     timer(1000, 1000).pipe(
       takeWhile(() => this.otp_ttl > 0),
       map(() => this.otp_ttl--)
-    ).subscribe(() => console.log(this.otp_ttl));
+    ).subscribe({
+      next: (value) => console.log(`otp_ttl: ${this.otp_ttl}`),
+      error: (err) => console.error(err),
+      complete: () => {
+        this.registerGuestUserFormGroup.get("name").enable();
+        this.registerGuestUserFormGroup.get("phone").enable();
+        this.verify = false;
+      }
+    });
   }
 
   private verifyGuestUserPhoneOTPResultHandler(result: Result<Guest>) {
@@ -247,7 +255,7 @@ export class LoginComponent implements OnInit {
     let failureResult: Result<User>;
     let info = error.statusText;
 
-    if (error.status === 422) {
+    if ((error.status === 401) || (error.status === 422)) {
       failureResult = Object.assign(new Result(), error.error);
       info = failureResult.info[0];
     }
