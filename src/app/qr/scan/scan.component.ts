@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
@@ -11,6 +11,7 @@ import { Result } from '../../model/result';
 import { User } from '../../user/model/user';
 import { Guest } from 'src/app/user/model/guest';
 import { Token } from '../../user/model/token';
+import { Visit } from '../models/visit';
 import { Location } from '../models/location';
 import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
 import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-dialog.component';
@@ -23,8 +24,12 @@ import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-d
 export class ScanComponent implements OnInit {
   private _ciphertext: string;
   private _currentLocation: Location;
-  
+  private _currentDevice: MediaDeviceInfo = null;
+
+  availableDevices: MediaDeviceInfo[];
+
   locations: Observable<Location[]>;
+  scanEnabled = true;
 
   constructor(
     private dialog: MatDialog,
@@ -54,11 +59,10 @@ export class ScanComponent implements OnInit {
     });
   }
 
-  camerasFoundHandler(devices: MediaDeviceInfo[]) {
-    console.log(devices);
-  }
-
   scanSuccessHandler(result: string) {
+    if (!this.scanEnabled)
+      return;
+
     let username: string;
     let success = false;
 
@@ -74,18 +78,23 @@ export class ScanComponent implements OnInit {
       success = true;
     }
 
-    if (success)
+    if ((success) && (this.scanEnabled)) {
+      this.scanEnabled = false;
       this.visit(username);
+    }
   }
 
-  private visitResultHandler(result: Result<any>) {
-    console.log(result);
-    const info = result.info[0];
+  private visitResultHandler(result: Result<Visit>) {
+    const visit: Visit = Object.assign(new Visit(), result.data);
 
-    this.dialog.open(ScanSuccessDialogComponent, {
+    const dialogRef = this.dialog.open(ScanSuccessDialogComponent, {
       width: '80%',
       maxWidth: '600px',
-      data: info
+      data: visit
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      this.scanEnabled = true;
     });
   }
 
@@ -112,7 +121,10 @@ export class ScanComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe((user: User) => {
+        this.scanEnabled = true;
+
         if (user) {
+          this.scanEnabled = false;
           this.visit(user.username);
 
           this.snackBar.open(`${user.name} 已經完成資料登錄`, '確定', {
@@ -136,6 +148,10 @@ export class ScanComponent implements OnInit {
     this.userService.currentUser.token = token;
   }
 
+  onCamerasFound(devices: MediaDeviceInfo[]): void {
+    this.availableDevices = devices;
+  }
+
   set ciphertext(value: string) {
     this._ciphertext = value;
   }
@@ -153,5 +169,15 @@ export class ScanComponent implements OnInit {
   }
   public set currentLocation(value: Location) {
     this._currentLocation = value;
+  }
+
+  public get currentDevice(): MediaDeviceInfo {
+    return this._currentDevice;
+  }
+  public set currentDevice(value: MediaDeviceInfo) {
+    if (value == null)
+      return;
+
+    this._currentDevice = value;
   }
 }

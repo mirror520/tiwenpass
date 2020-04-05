@@ -8,8 +8,10 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserService } from '../user/user.service';
 import { Result } from '../model/result';
+import { Building } from './models/building';
 import { Location } from './models/location';
 import { Department } from '../user/model/department';
+import { Visit } from './models/visit';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +52,7 @@ export class RsaService {
     );
   }
 
-  visit(username: string, location_id: number): Observable<Result<any>> {
+  visit(username: string, location_id: number): Observable<Result<Visit>> {
     const params = {
       'id': location_id
     };
@@ -58,7 +60,7 @@ export class RsaService {
     return this.http.put(this.baseUrl + `/api/v1/visits/users/${username}`, params, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`)
     }).pipe(
-      map((value: Result<any>) => Object.assign(new Result<any>(), value))
+      map((value: Result<Visit>) => Object.assign(new Result<Visit>(), value))
     );
   }
 
@@ -72,6 +74,9 @@ export class RsaService {
         const location = new Location();
         location.id = 0;
         location.location = currentDepartment.department;
+        location.building = new Building();
+        location.building.building = "所屬單位";
+
         locations.push(location)
 
         for (const location of value) {

@@ -2,7 +2,15 @@
   <mat-form-field>
     <mat-select placeholder="特定地點" [(value)]="currentLocation">
       <mat-option *ngFor="let location of locations | async" [value]="location">
-        {{ location.location }}
+        [{{ location.building?.building }}][{{ location.location }}]
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <span class="spacer"></span>
+  <mat-form-field>
+    <mat-select placeholder="選擇攝影機" [(value)]="currentDevice">
+      <mat-option *ngFor="let availableDevice of availableDevices" [value]="availableDevice">
+        {{ availableDevice.label }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -10,9 +18,10 @@
 <div class="scan-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
     <mat-card fxFlexAlign="center">
         <mat-card-content>
-          <zxing-scanner 
+          <zxing-scanner class="scanner"
+            [(device)]="currentDevice"
             [formats]="['CODE_128', 'QR_CODE']"
-            (camerasFound)="camerasFoundHandler($event)"
+            (camerasFound)="onCamerasFound($event)"
             (scanSuccess)="scanSuccessHandler($event)"
           ></zxing-scanner>
         </mat-card-content>
