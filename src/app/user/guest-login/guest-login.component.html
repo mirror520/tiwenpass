@@ -11,7 +11,7 @@
             <mat-form-field class="login-field">
               <mat-label>行動電話</mat-label>
               <span matPrefix>+886 &nbsp;</span>
-              <input #phone matInput placeholder="0911111111" formControlName="phone"/>
+              <input #phone matInput type="tel" maxlength="10" placeholder="0911111111" formControlName="phone"/>
             </mat-form-field>
           </form>
           <form class="login-form" [formGroup]="loginGuestUserFormGroup">

@@ -50,12 +50,12 @@ export class RsaService {
     );
   }
 
-  visit(user_id: number, location_id: number): Observable<Result<any>> {
+  visit(username: string, location_id: number): Observable<Result<any>> {
     const params = {
       'id': location_id
     };
 
-    return this.http.put(this.baseUrl + `/api/v1/visits/users/${user_id}`, params, {
+    return this.http.put(this.baseUrl + `/api/v1/visits/users/${username}`, params, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`)
     }).pipe(
       map((value: Result<any>) => Object.assign(new Result<any>(), value))

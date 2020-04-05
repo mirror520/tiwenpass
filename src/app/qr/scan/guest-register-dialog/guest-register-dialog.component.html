@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>您是第一次使用身分證掃描驗證，需請您先完成資料登錄</h1>
+<div mat-dialog-content>
+  <form class="login-form" [formGroup]="registerGuestUserFormGroup">
+    <mat-form-field class="login-field">
+      <input #name matInput placeholder="訪客姓名" formControlName="name"/>
+    </mat-form-field>
+    <mat-form-field class="login-field">
+      <mat-label>聯絡電話</mat-label>
+      <input #phone matInput type="tel" maxlength="10" placeholder="0911111111" formControlName="phone"/>
+    </mat-form-field>
+    <mat-form-field class="login-field">
+      <input #id_card matInput placeholder="身分證字號" formControlName="id_card"/>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" class="login-field" cdkFocusInitial 
+          (click)="registerGuestUser(name.value, phone.value, id_card.value)">
+    送出
+  </button>
+</div>

@@ -9,7 +9,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { NgOtpInputModule } from 'ng-otp-input';
 import { UserRoutingModule } from './user-routing.module';
 import { SvgModule } from '../svg/svg.module';
 
@@ -35,7 +34,6 @@ import { GuestLoginComponent } from './guest-login/guest-login.component';
     MatIconModule,
     MatTabsModule,
     MatSnackBarModule,
-    NgOtpInputModule,
     UserRoutingModule,
     SvgModule,
   ],

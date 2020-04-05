@@ -29,7 +29,7 @@ export class GuestLoginComponent implements OnInit {
     this.loginGuestUserFormGroup = this.formBuilder.group({
       phone: [
         null,
-        Validators.required
+        [Validators.required, Validators.pattern("09[0-9]{8}")]
       ],
       phone_token: [
         null,

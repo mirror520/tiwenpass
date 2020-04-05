@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { isNationalIdentificationNumberValid } from 'taiwan-id-validator';
@@ -8,8 +9,11 @@ import { RsaService } from '../rsa.service';
 import { UserService } from '../../user/user.service';
 import { Result } from '../../model/result';
 import { User } from '../../user/model/user';
+import { Guest } from 'src/app/user/model/guest';
 import { Token } from '../../user/model/token';
 import { Location } from '../models/location';
+import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
+import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-dialog.component';
 
 @Component({
   selector: 'app-scan',
@@ -20,11 +24,10 @@ export class ScanComponent implements OnInit {
   private _ciphertext: string;
   private _currentLocation: Location;
   
-  info: string;
-
   locations: Observable<Location[]>;
 
   constructor(
+    private dialog: MatDialog,
     private rsaService: RsaService,
     private userService: UserService,
     private snackBar: MatSnackBar,
@@ -40,8 +43,12 @@ export class ScanComponent implements OnInit {
     this.locations = this.rsaService.getLocations();
   }
 
-  visit(user_id: number, location_id: number) {
-    this.rsaService.visit(user_id, location_id).subscribe({
+  visit(username: string) {
+    let locationID = 0;
+    if (this.currentLocation)
+      locationID = this.currentLocation.id
+
+    this.rsaService.visit(username, locationID).subscribe({
       next: (value) => this.visitResultHandler(value),
       error: (err) => this.faultHandler(err),
     });
@@ -52,52 +59,67 @@ export class ScanComponent implements OnInit {
   }
 
   scanSuccessHandler(result: string) {
-    this.ciphertext = result;
-    console.log(`已成功取得密文: ${result}`);
+    let username: string;
+    let success = false;
 
     if (isNationalIdentificationNumberValid(result)) {
-      this.info = result;
-
-      this.snackBar.open(`成功解析出身分證`, '確定', {
-        duration: 2000
-      });
+      username = result;
+      success = true;
     }
 
-    const user = this.rsaService.decrypt(this.ciphertext);
-    console.log(user);
+    const user = this.rsaService.decrypt(result);
     if (user) {
-      this.decryptSuccessHandler(user)
+      let info = user.split(",")
+      username = info[1];
+      success = true;
     }
-  }
 
-  decryptSuccessHandler(user: string) {
-    let info = user.split(",")
-    let userID = parseInt(info[0]);
-    let locationID = 0
-    if (this.currentLocation)
-      locationID = this.currentLocation.id
-
-    this.visit(userID, locationID);
-
-    this.snackBar.open("成功解析出 QR Code", '確定', {
-      duration: 2000
-    });
+    if (success)
+      this.visit(username);
   }
 
   private visitResultHandler(result: Result<any>) {
-    this.info = result.info[0];
+    console.log(result);
+    const info = result.info[0];
+
+    this.dialog.open(ScanSuccessDialogComponent, {
+      width: '80%',
+      maxWidth: '600px',
+      data: info
+    });
   }
 
   private faultHandler(error: HttpErrorResponse) {
-    const failureResult = Object.assign(new Result(), error.error);
-    const info = failureResult.info[0]
+    const result: Result<any> = Object.assign(new Result(), error.error);
+    const info = result.info[0]
 
     if (error.status === 401) {
       this.userService.refreshToken().subscribe({
         next: (value) => this.refreshTokenHandler(value),
         error: (err) => console.error(err),
         complete: () => console.log('complete')
-      })
+      });
+    }
+
+    if (error.status === 409) {
+      const guest = new Guest();
+      guest.id_card = result.data;
+
+      const dialogRef = this.dialog.open(GuestRegisterDialogComponent, {
+        width: '80%',
+        maxWidth: '600px',
+        data: guest
+      });
+
+      dialogRef.afterClosed().subscribe((user: User) => {
+        if (user) {
+          this.visit(user.username);
+
+          this.snackBar.open(`${user.name} 已經完成資料登錄`, '確定', {
+            duration: 2000
+          });
+        }
+      });
     }
 
     if (error.status === 422) {

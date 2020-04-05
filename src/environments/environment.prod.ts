@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
 
-  baseUrl: 'https://tiwengo.linyc.idv.tw',
+  baseUrl: 'https://tiwengo.tccgov.tw',
 };

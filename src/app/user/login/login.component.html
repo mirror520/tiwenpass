@@ -15,10 +15,12 @@
             <mat-form-field class="login-field">
               <mat-label>行動電話</mat-label>
               <span matPrefix>+886 &nbsp;</span>
-              <input #phone matInput type="number" placeholder="0911111111" formControlName="phone"/>
+              <input #phone matInput type="tel" maxlength="10" placeholder="0911111111" formControlName="phone"/>
             </mat-form-field>
-            <ng-otp-input *ngIf="verify" [config]="config" class="otp-field"
-                          (onInputChange)="otpInputChangeHandler($event)"></ng-otp-input>
+            <mat-form-field *ngIf="verify" class="login-field" appearance="outline">
+              <mat-label>簡訊驗證碼</mat-label>
+              <input matInput type="tel" maxlength="4" formControlName="otp_code"/>
+            </mat-form-field>
           </form>
         </mat-tab>
         <mat-tab label="公務帳號" [disabled]="verify">
@@ -41,8 +43,8 @@
     </mat-card-content>
     <mat-card-actions>
       <button *ngIf="verify" mat-raised-button color="primary" class="login-field"
-              [disabled]="(otp_ttl == 0) || (otp_code.length != 4)" 
-              (click)="verifyGuestUserPhoneOTP(otp_code)">
+              [disabled]="(otp_ttl == 0) || registerGuestUserFormGroup.invalid" 
+              (click)="verifyGuestUserPhoneOTP()">
         送出，剩餘 {{ otp_ttl }} 秒
       </button>
       <button *ngIf="!tabGroupIndex && !verify" mat-raised-button color="primary" class="login-field"

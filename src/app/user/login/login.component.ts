@@ -24,17 +24,6 @@ export class LoginComponent implements OnInit {
   tabGroupIndex = 0;
   otp_code = "";
   otp_ttl = 60;
-  config = {
-    allowNumbersOnly: true,
-    length: 4,
-    isPasswordInput: false,
-    disableAutoFocus: true,
-    placeholder:'',
-    inputStyles: {
-      'width': '40px',
-      'height': '40px'
-    }
-  };
 
   loginTccgUserFormGroup: FormGroup;
   registerGuestUserFormGroup: FormGroup;
@@ -74,7 +63,11 @@ export class LoginComponent implements OnInit {
       ],
       phone: [
         null,
-        Validators.required
+        [Validators.required, Validators.pattern("09[0-9]{8}")]
+      ],
+      otp_code: [
+        null,
+        [Validators.pattern("[0-9]{4}")]
       ]
     });
   }
@@ -120,9 +113,9 @@ export class LoginComponent implements OnInit {
     this.registerGuestUserFormGroup.get("phone").disable();
   }
 
-  verifyGuestUserPhoneOTP(value: string) {
+  verifyGuestUserPhoneOTP() {
     const guest = this.currentUser.guest;
-    guest.phone_otp = value;
+    guest.phone_otp = this.registerGuestUserFormGroup.get("otp_code").value;
 
     this.userService.verifyGuestUserPhoneOTP(guest)
                     .subscribe({
@@ -135,7 +128,8 @@ export class LoginComponent implements OnInit {
     this.tabGroupIndex = index;
   }
 
-  otpInputChangeHandler(value: string) {
+  otpInputChangeHandler(value) {
+    console.log(value);
     this.otp_code = value;
   }
 

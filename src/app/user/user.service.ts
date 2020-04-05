@@ -54,13 +54,22 @@ export class UserService {
     );
   }
 
-  registerGuestUser(name: string, phone: string): Observable<Result<User>> {
+  registerGuestUser(name: string, phone: string, id_card?: string): Observable<Result<User>> {
     const params = {
       'name': name,
-      'phone': phone
+      'phone': phone,
+      'id_card': id_card
     };
 
     return this.http.post(this.baseUrl + '/api/v1/guests/register', params).pipe(
+      map((value: Result<User>) => Object.assign(new Result<User>(), value))
+    );
+  }
+
+  verifyGuestUserIDCard(user: User): Observable<Result<User>> {
+    return this.http.patch(this.baseUrl + `/api/v1/guests/verify/${user.id}/idcard`, null, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.token.token}`)
+    }).pipe(
       map((value: Result<User>) => Object.assign(new Result<User>(), value))
     );
   }
