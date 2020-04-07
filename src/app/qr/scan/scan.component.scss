@@ -2,7 +2,15 @@
 
 #toolbar {
     @include mat-elevation(4);
-    height: 15vh;
+}
+
+#sidenav {
+    @include mat-elevation(8);
+    width: 300px;
+}
+
+.form-field {
+    width: 100%;
 }
 
 .scan-page {
@@ -10,8 +18,4 @@
     width: 80%;
     max-width: 800px;
     margin: 20px auto;
-}
-
-.spacer {
-    flex: 1 1 auto;
 }

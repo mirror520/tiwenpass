@@ -1,15 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable } from 'rxjs';
 import { isNationalIdentificationNumberValid } from 'taiwan-id-validator';
+import { Observable } from 'rxjs';
 
 import { RsaService } from '../rsa.service';
 import { UserService } from '../../user/user.service';
 import { Result } from '../../model/result';
 import { User } from '../../user/model/user';
-import { Guest } from 'src/app/user/model/guest';
+import { Guest } from '../../user/model/guest';
 import { Token } from '../../user/model/token';
 import { Visit } from '../models/visit';
 import { Location } from '../models/location';
@@ -27,12 +28,13 @@ export class ScanComponent implements OnInit {
   private _currentDevice: MediaDeviceInfo = null;
 
   availableDevices: MediaDeviceInfo[];
-
   locations: Observable<Location[]>;
   scanEnabled = true;
+  lastUsername: string;
 
   constructor(
     private dialog: MatDialog,
+    private router: Router,
     private rsaService: RsaService,
     private userService: UserService,
     private snackBar: MatSnackBar,
@@ -53,9 +55,23 @@ export class ScanComponent implements OnInit {
     if (this.currentLocation)
       locationID = this.currentLocation.id
 
+    this.lastUsername = username;
+    
     this.rsaService.visit(username, locationID).subscribe({
       next: (value) => this.visitResultHandler(value),
       error: (err) => this.faultHandler(err),
+    });
+  }
+
+  logout() {
+    localStorage.removeItem("account");
+    localStorage.removeItem("password");
+
+    this.currentUser = null;
+    this.router.navigate(['/']);
+
+    this.snackBar.open(`帳號已登出`, '確定', {
+      duration: 2000
     });
   }
 
@@ -105,7 +121,7 @@ export class ScanComponent implements OnInit {
     if (error.status === 401) {
       this.userService.refreshToken().subscribe({
         next: (value) => this.refreshTokenHandler(value),
-        error: (err) => console.error(err),
+        error: (err) => this.faultHandler(err),
         complete: () => console.log('complete')
       });
     }
@@ -146,6 +162,12 @@ export class ScanComponent implements OnInit {
   private refreshTokenHandler(result: Result<Token>) {
     const token: Token = Object.assign(new Token(), result.data);
     this.userService.currentUser.token = token;
+
+    if (this.lastUsername) {
+      this.visit(this.lastUsername);
+
+      this.lastUsername = null;
+    }
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
@@ -160,6 +182,9 @@ export class ScanComponent implements OnInit {
     return this._ciphertext;
   }
 
+  public set currentUser(value: User) {
+    this.userService.currentUser = value;
+  }
   public get currentUser(): User {
     return this.userService.currentUser;
   }

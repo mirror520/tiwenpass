@@ -9,7 +9,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
@@ -34,8 +36,10 @@ import { ScanSuccessDialogComponent } from './scan/scan-success-dialog/scan-succ
     MatCardModule,
     MatButtonModule,
     MatDialogModule,
+    MatIconModule,
     MatInputModule,
     MatSelectModule,
+    MatSidenavModule,
     MatSnackBarModule,
     MatToolbarModule,
   ]

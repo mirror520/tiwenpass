@@ -2,11 +2,14 @@
   <span class="toolbar-text">請將您的 QR Code 出示給附近人員掃描</span>
 </mat-toolbar>
 <div class="qrcode-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
-    <mat-card fxFlexAlign="center">
-        <mat-card-content>
-            <img class="qrcode-image" [src]="qrCodeImageUrl | async">
-        </mat-card-content>
-        <mat-card-actions>
-        </mat-card-actions>
-    </mat-card>
+  <mat-card fxFlexAlign="center">
+    <mat-card-content>
+        <img class="qrcode-image" [src]="qrCodeImageUrl | async">
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" class="form-field" (click)="logout()">
+        登出
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </div>

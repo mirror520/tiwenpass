@@ -39,9 +39,22 @@ export class LoginComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       let token = params['t'];
       if (token) {
-        this.router.navigate(['/login/guest'], { queryParams: { t: token } });
+        this.loginGuestUser(token)
       }
     });
+
+    let account = localStorage.getItem("account");
+    let password = localStorage.getItem("password");
+
+    if ((account != null) && (password != null)) {
+      this.loginTccgUser(account, password);
+      return;
+    }
+
+    let phone_token = localStorage.getItem("phone_token");
+    if (phone_token != null) {
+      this.loginGuestUser(phone_token);
+    }
   }
 
   ngOnInit() {
@@ -77,18 +90,34 @@ export class LoginComponent implements OnInit {
 
     this.userService.loginTccgUser(account, password)
                     .subscribe({
-                      next: (value) => this.loginTccgUserResultHandler(value),
-                      error: (error) => this.faultHandler(error)
+                      next: (value) => {
+                        localStorage.setItem("account", account)
+                        localStorage.setItem("password", password)
+
+                        this.loginTccgUserResultHandler(value)
+                      },
+                      error: (error) => {
+                        localStorage.removeItem("account");
+                        localStorage.removeItem("password");
+
+                        this.faultHandler(error);
+                      }
                     });
   }
 
-  loginGuestUser(phone: string, phone_token: string) {
+  loginGuestUser(phone_token: string) {
     this.currentUser = null;
 
-    this.userService.loginGuestUser(phone, phone_token)
+    this.userService.loginGuestUser(phone_token)
                     .subscribe({
-                      next: (value) => this.loginGuestUserResultHandler(value),
-                      error: (error) => this.faultHandler(error)
+                      next: (value) => {
+                        localStorage.setItem("phone_token", phone_token);
+                        this.loginGuestUserResultHandler(value);
+                      },
+                      error: (error) => {
+                        localStorage.removeItem("phone_token");
+                        this.faultHandler(error);
+                      }
                     });
   }
 
@@ -129,7 +158,6 @@ export class LoginComponent implements OnInit {
   }
 
   otpInputChangeHandler(value) {
-    console.log(value);
     this.otp_code = value;
   }
 
@@ -241,7 +269,7 @@ export class LoginComponent implements OnInit {
       duration: 2000
     });
 
-    this.loginGuestUser(guest.phone, guest.phone_token);
+    this.loginGuestUser(guest.phone_token);
   }
 
 

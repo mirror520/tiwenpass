@@ -34,9 +34,9 @@ export class UserService {
     );
   }
 
-  loginGuestUser(phone: string, phone_token: string): Observable<Result<User>> {
+  loginGuestUser(phone_token: string): Observable<Result<User>> {
     const params = {
-      'username': phone,
+      'username': "0987587487",
       'password': phone_token,
       'type': UserType.Guest
     };
@@ -47,7 +47,7 @@ export class UserService {
   }
 
   refreshToken(): Observable<Result<Token>> {
-    return this.http.patch(this.baseUrl + '/api/v1/auth/refresh_token', {
+    return this.http.patch(this.baseUrl + '/api/v1/auth/refresh_token', null, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.token.token}`)
     }).pipe(
       map((value: Result<Token>) => Object.assign(new Result<Token>(), value))

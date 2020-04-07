@@ -1,31 +1,43 @@
-<mat-toolbar id="toolbar" color="primary">
-  <mat-form-field>
-    <mat-select placeholder="特定地點" [(value)]="currentLocation">
-      <mat-option *ngFor="let location of locations | async" [value]="location">
-        [{{ location.building?.building }}][{{ location.location }}]
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <span class="spacer"></span>
-  <mat-form-field>
-    <mat-select placeholder="選擇攝影機" [(value)]="currentDevice">
-      <mat-option *ngFor="let availableDevice of availableDevices" [value]="availableDevice">
-        {{ availableDevice.label }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</mat-toolbar>
-<div class="scan-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
+<mat-sidenav-container fullscreen>
+  <header>
+    <mat-toolbar id="toolbar" color="primary">
+      <button mat-icon-button matTooltip="開啟選單"
+              (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-toolbar>
+  </header>
+  <mat-sidenav #sidenav id="sidenav">
+    <mat-form-field class="form-field">
+      <mat-select placeholder="特定地點" [(value)]="currentLocation">
+        <mat-option *ngFor="let location of locations | async" [value]="location">
+          [{{ location.building?.building }}][{{ location.location }}]
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="form-field">
+      <mat-select placeholder="選擇攝影機" [(value)]="currentDevice">
+        <mat-option *ngFor="let availableDevice of availableDevices" [value]="availableDevice">
+          {{ availableDevice.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" class="form-field" (click)="logout()">
+      登出
+    </button>
+  </mat-sidenav>
+  <div class="scan-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
     <mat-card fxFlexAlign="center">
-        <mat-card-content>
-          <zxing-scanner class="scanner"
-            [(device)]="currentDevice"
-            [formats]="['CODE_128', 'QR_CODE']"
-            (camerasFound)="onCamerasFound($event)"
-            (scanSuccess)="scanSuccessHandler($event)"
-          ></zxing-scanner>
-        </mat-card-content>
-        <mat-card-actions>
-        </mat-card-actions>
+      <mat-card-content>
+        <zxing-scanner class="scanner"
+          [(device)]="currentDevice"
+          [formats]="['CODE_128', 'QR_CODE']"
+          (camerasFound)="onCamerasFound($event)"
+          (scanSuccess)="scanSuccessHandler($event)"
+        ></zxing-scanner>
+      </mat-card-content>
+      <mat-card-actions>
+      </mat-card-actions>
     </mat-card>
-</div>
+  </div>
+</mat-sidenav-container>
