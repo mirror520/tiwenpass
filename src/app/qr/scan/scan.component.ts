@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { isNationalIdentificationNumberValid } from 'taiwan-id-validator';
 import { Observable } from 'rxjs';
@@ -31,6 +32,8 @@ export class ScanComponent implements OnInit {
   locations: Observable<Location[]>;
   scanEnabled = true;
   lastUsername: string;
+
+  @ViewChild(MatInput) scanner: MatInput;
 
   constructor(
     private dialog: MatDialog,
@@ -79,6 +82,10 @@ export class ScanComponent implements OnInit {
     if (!this.scanEnabled)
       return;
 
+    if (this.scanner.value != "") {
+      this.scanner.value = "";
+    }
+
     let username: string;
     let success = false;
 
@@ -98,6 +105,10 @@ export class ScanComponent implements OnInit {
       this.scanEnabled = false;
       this.visit(username);
     }
+  }
+
+  focusScanner() {
+    this.scanner.focus();
   }
 
   private visitResultHandler(result: Result<Visit>) {

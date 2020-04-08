@@ -35,8 +35,14 @@
           (camerasFound)="onCamerasFound($event)"
           (scanSuccess)="scanSuccessHandler($event)"
         ></zxing-scanner>
+        <mat-form-field>
+          <input #scanner matInput (keyup.enter)="scanSuccessHandler(scanner.value)"/>
+        </mat-form-field>
       </mat-card-content>
       <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="focusScanner()">
+          使用掃描器
+        </button>
       </mat-card-actions>
     </mat-card>
   </div>
