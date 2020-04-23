@@ -17,6 +17,7 @@ import { Visit } from '../models/visit';
 import { Location } from '../models/location';
 import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
 import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-dialog.component';
+import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 
 @Component({
   selector: 'app-scan',
@@ -33,6 +34,7 @@ export class ScanComponent implements OnInit {
   scanEnabled = true;
   lastUsername: string;
 
+  @ViewChild(ZXingScannerComponent) qrScanner: ZXingScannerComponent;
   @ViewChild(MatInput) scanner: MatInput;
 
   constructor(
@@ -104,11 +106,21 @@ export class ScanComponent implements OnInit {
     if ((success) && (this.scanEnabled)) {
       this.scanEnabled = false;
       this.visit(username);
+    } else {
+      this.snackBar.open('您使用無效或已經過期的條碼', '確定', {
+        duration: 2000
+      });
     }
   }
 
   focusScanner() {
     this.scanner.focus();
+  }
+
+  switchShowQRCode() {
+    this.qrScanner.enable = false;
+
+    this.router.navigate(['/qr/show']);
   }
 
   private visitResultHandler(result: Result<Visit>) {

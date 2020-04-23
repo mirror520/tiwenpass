@@ -15,6 +15,7 @@
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button color="primary" class="login-field" cdkFocusInitial 
+          [disabled]="registerGuestUserFormGroup.invalid" 
           (click)="registerGuestUser(name.value, phone.value, id_card.value)">
     送出
   </button>

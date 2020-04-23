@@ -2,8 +2,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import * as JsEncryptModule from 'jsencrypt';
 import { map } from 'rxjs/operators';
+import * as JsEncryptModule from 'jsencrypt';
 
 import { environment } from '../../environments/environment';
 import { UserService } from '../user/user.service';
@@ -23,6 +23,7 @@ export class RsaService {
 
   private jsEncrypt;
   private _privkey;
+  private _qrCraetedDate: Date;
 
   constructor(
     private domSanitizer: DomSanitizer,
@@ -46,6 +47,8 @@ export class RsaService {
       responseType: 'blob'
     }).pipe(
       map((value: Blob) => {
+        this.qrCreatedDate = new Date();
+
         let objUrl = URL.createObjectURL(value);
         return this.domSanitizer.bypassSecurityTrustUrl(objUrl);
       })
@@ -104,6 +107,13 @@ export class RsaService {
 
   private get token(): string {
     return this.userService.currentUser.token.token;
+  }
+
+  public get qrCreatedDate(): Date {
+    return this._qrCraetedDate;
+  }
+  public set qrCreatedDate(value: Date) {
+    this._qrCraetedDate = value;
   }
 
   public get redirectUrl(): string {

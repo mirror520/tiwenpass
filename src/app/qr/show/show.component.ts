@@ -34,11 +34,18 @@ export class ShowComponent {
     });
   }
 
+  switchQRCodeScanner() {
+    this.router.navigate(['/qr/scan']);
+  }
+
   public set currentUser(value: User) {
     this.userService.currentUser = value;
   }
-  
   public get currentUser(): User {
     return this.userService.currentUser;
+  }
+
+  public get qrCreatedDate(): Date {
+    return this.rsaService.qrCreatedDate;
   }
 }

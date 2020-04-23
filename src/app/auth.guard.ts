@@ -32,7 +32,8 @@ export class AuthGuard implements CanActivate {
       return currentUser.type == UserType.Employee;
 
     if (state.url === '/qr/show')
-      return currentUser.type == UserType.Guest;
+      return currentUser.type == UserType.Guest || 
+             currentUser.type == UserType.Employee;
 
     return true;
   }

@@ -1,10 +1,19 @@
 <mat-toolbar id="toolbar" color="primary">
-  <span class="toolbar-text">請將您的 QR Code 出示給附近人員掃描</span>
+  <span class="toolbar-text">QR Code ({{ qrCreatedDate | date: 'yyyy/MM/dd' }})</span>
+  <span class="spacer"></span>
+  <div *ngIf="currentUser.type == 0">
+    切換為掃描器
+    <button mat-icon-button matTooltip="QR Code"
+            (click)="switchQRCodeScanner()">
+      <mat-icon>camera</mat-icon>
+    </button>
+  </div>
 </mat-toolbar>
 <div class="qrcode-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
   <mat-card fxFlexAlign="center">
     <mat-card-content>
-        <img class="qrcode-image" [src]="qrCodeImageUrl | async">
+      <img class="qrcode-image" [src]="qrCodeImageUrl | async">
+      <span>提醒您，可以使用最後一封驗證簡訊網址再次登入</span>
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button color="primary" (click)="logout()">

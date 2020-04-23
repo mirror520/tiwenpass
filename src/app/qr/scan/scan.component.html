@@ -5,6 +5,13 @@
               (click)="sidenav.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
+      <span class="toolbar-text">Scanner</span>
+      <span class="spacer"></span>
+      切換為行動條碼
+      <button mat-icon-button matTooltip="QR Code"
+              (click)="switchShowQRCode()">
+        <mat-icon>select_all</mat-icon>
+      </button>
     </mat-toolbar>
   </header>
   <mat-sidenav #sidenav id="sidenav">
@@ -36,7 +43,7 @@
           (scanSuccess)="scanSuccessHandler($event)"
         ></zxing-scanner>
         <mat-form-field>
-          <input #scanner matInput (keyup.enter)="scanSuccessHandler(scanner.value)"/>
+          <input #scanner matInput type="password" (keyup.enter)="scanSuccessHandler(scanner.value)"/>
         </mat-form-field>
       </mat-card-content>
       <mat-card-actions>

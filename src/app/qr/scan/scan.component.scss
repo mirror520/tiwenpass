@@ -2,6 +2,7 @@
 
 #toolbar {
     @include mat-elevation(4);
+    height: 10vh;
 }
 
 #sidenav {
@@ -18,4 +19,12 @@
     width: 80%;
     max-width: 800px;
     margin: 20px auto;
+}
+
+.toolbar-text {
+    font-size: 5vmin;
+}
+
+.spacer {
+    flex: 1 1 auto;
 }
