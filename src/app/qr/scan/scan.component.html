@@ -35,6 +35,12 @@
   </mat-sidenav>
   <div class="scan-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
     <mat-card fxFlexAlign="center">
+      <p *ngIf="currentLocation">
+        目前所在的地點是：{{ currentLocation.building?.building }}{{ currentLocation.location }}
+      </p>
+      <p *ngIf="!currentLocation">
+        目前所在的地點是：洽公單位
+      </p>
       <mat-card-content>
         <zxing-scanner class="scanner"
           [(device)]="currentDevice"

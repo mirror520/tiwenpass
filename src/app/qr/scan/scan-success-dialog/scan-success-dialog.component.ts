@@ -19,7 +19,7 @@ export class ScanSuccessDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.closeTime = 3;
+    this.closeTime = 1;
 
     timer(1000, 1000).pipe(
       takeWhile(() => this.closeTime > 0),
