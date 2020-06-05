@@ -3,7 +3,7 @@
     <app-tccg-logo></app-tccg-logo>
     <span>防疫追蹤溯源實名登記</span>
   </div>
-  <mat-card fxFlexAlign="center">
+  <mat-card class="login-container" fxFlexAlign="center">
     <mat-card-content>
       <mat-tab-group #tabGroup dynamicHeight mat-align-tabs="center"
                      (selectedIndexChange)="selectedIndexChangeHandler($event)">
@@ -13,12 +13,12 @@
               <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                    個人資料蒐集、處理及利用告知暨同意書
+                    個人資料蒐集、處理及利用告知事項
                   </mat-panel-title>
                 </mat-expansion-panel-header>
               
                 <mat-form-field class="login-form">
-                  <mat-label>告知事項</mat-label>
+                  <mat-label>告知事項暨同意書</mat-label>
                   <textarea matInput rows="10" readonly style="text-align: justify">
 臺中市政府秘書處(以下簡稱本處)為進行新冠肺炎(COVID-19)防疫追蹤溯源，針對進入本場所之民眾及非駐府人員進行實名登記，在您提供個人資料前，依據個人資料保護法告知下列事項：
 一、蒐集之目的：防疫目的，依據「個人資料保護法之特定目的及個人資料之類別」為代號012公共衛生或傳染病防治之特定目的，且不為目的外利用。
@@ -34,8 +34,8 @@
                 </mat-form-field>
               
                 <mat-action-row>
-                  <div style="padding-top: 16px; color: red;">
-                    點選「同意」，即表示您接受告知事項
+                  <div style="padding-top: 16px; color: red; font-size: small;">
+                    點選「同意」，即表示您同意告知事項
                   </div>
                   <button mat-raised-button color="primary" (click)="agreedNotice()">同意</button>
                 </mat-action-row>
