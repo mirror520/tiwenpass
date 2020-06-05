@@ -9,20 +9,90 @@
                      (selectedIndexChange)="selectedIndexChangeHandler($event)">
         <mat-tab label="洽公訪客">
           <form class="login-form" [formGroup]="registerGuestUserFormGroup">
-            <mat-form-field class="login-field">
-              <input #name matInput placeholder="訪客姓名" formControlName="name"/>
-            </mat-form-field>
-            <mat-form-field class="login-field" style="height: 80px;">
-              <mat-label>行動電話</mat-label>
-              <input #phone matInput type="tel" maxlength="10" placeholder="0911111111" formControlName="phone"/>
-              <mat-hint *ngIf="!verify" style="color: red;">
-                如同意則請輸入個人資料，相關資料依個人資料保護法相關規定處理，不做其他用途使用。
-              </mat-hint>
-            </mat-form-field>
-            <mat-form-field *ngIf="verify" class="login-field" appearance="outline">
-              <mat-label>簡訊驗證碼</mat-label>
-              <input matInput type="tel" maxlength="4" formControlName="otp_code"/>
-            </mat-form-field>
+            <mat-accordion>
+              <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    個人資料蒐集、處理及利用告知暨同意書
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+              
+                <mat-form-field class="login-form">
+                  <mat-label>告知事項</mat-label>
+                  <textarea matInput rows="10" readonly style="text-align: justify">
+臺中市政府秘書處(以下簡稱本處)為進行新冠肺炎(COVID-19)防疫追蹤溯源，針對進入本場所之民眾及非駐府人員進行實名登記，在您提供個人資料前，依據個人資料保護法告知下列事項：
+一、蒐集之目的：防疫目的，依據「個人資料保護法之特定目的及個人資料之類別」為代號012公共衛生或傳染病防治之特定目的，且不為目的外利用。
+二、蒐集之個人資料項目：姓名、電話號碼及身分證字號。
+三、個人資料利用之期間：自蒐集日起28日內。
+四、個人資料利用之對象及方式：為防堵疫情而有必要時，得提供衛生主管機關依傳染病防治法等規定進行疫情調查及聯繫使用。
+五、當事人就其個人資料得依個人資料保護法規定向蒐集之機關行使權利，包括查詢或請求閱覽、請求製給複製本、請求補充或更正、請求蒐集、處理或利用、請求刪除，及行使方式。
+六、當事人不同意提供個人資料，將無法進入本場所。
+七、當事人或受告知人已清楚了解上開告知事項，並同意依據告知事項所述，提供個人資料予本處，即配合註冊「防疫追蹤溯源實名登記APP」資料。
+
+臺中市政府秘書處 敬啟
+                  </textarea>
+                </mat-form-field>
+              
+                <mat-action-row>
+                  <div style="padding-top: 16px; color: red;">
+                    點選「同意」，即表示您接受告知事項
+                  </div>
+                  <button mat-raised-button color="primary" (click)="agreedNotice()">同意</button>
+                </mat-action-row>
+              </mat-expansion-panel>
+            
+              <mat-expansion-panel hideToggle 
+                [expanded]="step === 1" [disabled]="!agreed" (opened)="setStep(1)">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    需保留您有效的聯繫資訊
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+              
+                <mat-form-field class="login-field">
+                  <mat-label>訪客姓名</mat-label>
+                  <input #name matInput formControlName="name"/>
+                </mat-form-field>
+                <mat-form-field class="login-field">
+                  <mat-label>行動電話</mat-label>
+                  <input #phone matInput formControlName="phone" 
+                         type="tel" maxlength="10" placeholder="0911111111"/>
+                </mat-form-field>
+              
+                <mat-action-row>
+                  <button mat-button color="warn" (click)="prevStep()">回上一步</button>
+                  <button *ngIf="!verify" mat-raised-button color="primary"
+                          [disabled]="registerGuestUserFormGroup.invalid"
+                          (click)="registerGuestUser(name.value, phone.value)">
+                    驗證電話
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+            
+              <mat-expansion-panel hideToggle 
+                [expanded]="step === 2" [disabled]="!verify" (opened)="setStep(2)">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    以簡訊驗證您的行動電話
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+              
+                <mat-form-field class="login-field" appearance="outline">
+                  <mat-label>簡訊驗證碼</mat-label>
+                  <input matInput type="tel" maxlength="4" formControlName="otp_code"/>
+                </mat-form-field>
+              
+                <mat-action-row>
+                  <!-- <button mat-button color="warn" (click)="prevStep()">回上一步</button> -->
+                  <!-- <button mat-button color="primary" (click)="nextStep()">End</button> -->
+                  <button mat-raised-button color="primary" class="login-field"
+                          [disabled]="(otp_ttl == 0) || registerGuestUserFormGroup.invalid" 
+                          (click)="verifyGuestUserPhoneOTP()">
+                    送出，剩餘 {{ otp_ttl }} 秒
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+            </mat-accordion>
           </form>
         </mat-tab>
         <mat-tab label="公務帳號" [disabled]="verify">
@@ -44,16 +114,6 @@
       </mat-tab-group>
     </mat-card-content>
     <mat-card-actions>
-      <button *ngIf="verify" mat-raised-button color="primary" class="login-field"
-              [disabled]="(otp_ttl == 0) || registerGuestUserFormGroup.invalid" 
-              (click)="verifyGuestUserPhoneOTP()">
-        送出，剩餘 {{ otp_ttl }} 秒
-      </button>
-      <button *ngIf="!tabGroupIndex && !verify" mat-raised-button color="primary" class="login-field"
-              [disabled]="registerGuestUserFormGroup.invalid"
-              (click)="registerGuestUser(name.value, phone.value)">
-        驗證行動電話
-      </button>
       <button *ngIf="tabGroupIndex" mat-raised-button color="primary" class="login-field" 
               [disabled]="loginTccgUserFormGroup.invalid" 
               (click)="loginTccgUser(account.value, password.value)">

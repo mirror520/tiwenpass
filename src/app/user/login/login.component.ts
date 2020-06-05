@@ -21,7 +21,10 @@ import { DuplicateVerificationDialogComponent } from './duplicate-verification-d
 export class LoginComponent implements OnInit {
   hide = true;
   verify = false;
+  agreed = false;
   tabGroupIndex = 0;
+  step = 0;
+
   otp_code = "";
   otp_ttl = 60;
 
@@ -85,6 +88,11 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  agreedNotice() {
+    this.agreed = true;
+    this.nextStep();
+  }
+
   loginTccgUser(account: string, password: string) {
     this.currentUser = null;
 
@@ -137,9 +145,6 @@ export class LoginComponent implements OnInit {
                       next: (value) => this.sendGuestPhoneOTPResultHandler(value),
                       error: (error) => this.faultHandler(error)
                     });
-
-    this.registerGuestUserFormGroup.get("name").disable();
-    this.registerGuestUserFormGroup.get("phone").disable();
   }
 
   verifyGuestUserPhoneOTP() {
@@ -171,7 +176,6 @@ export class LoginComponent implements OnInit {
     });
 
     if (this.userService.redirectUrl != null) {
-      // this.router.navigate([this.userService.redirectUrl]);
       this.userService.redirectUrl = null;
       this.router.navigate(['/qr/scan']);
     } else {
@@ -189,7 +193,6 @@ export class LoginComponent implements OnInit {
     });
 
     if (this.userService.redirectUrl != null) {
-      // this.router.navigate([this.userService.redirectUrl]);
       this.userService.redirectUrl = null;
       this.router.navigate(['/qr/show']);
     } else {
@@ -246,6 +249,10 @@ export class LoginComponent implements OnInit {
     this.otp_code = "";
     this.otp_ttl = 60;
 
+    this.registerGuestUserFormGroup.get("name").disable();
+    this.registerGuestUserFormGroup.get("phone").disable();
+    this.nextStep();
+
     timer(1000, 1000).pipe(
       takeWhile(() => this.otp_ttl > 0),
       map(() => this.otp_ttl--)
@@ -256,6 +263,7 @@ export class LoginComponent implements OnInit {
         this.registerGuestUserFormGroup.get("name").enable();
         this.registerGuestUserFormGroup.get("phone").enable();
         this.verify = false;
+        this.setStep(1);
       }
     });
   }
@@ -285,6 +293,18 @@ export class LoginComponent implements OnInit {
     this.snackBar.open(info, '確定', {
       duration: 2000
     });
+  }
+
+  setStep(index: number) {
+    this.step = index;
+  }
+
+  nextStep() {
+    this.step++;
+  }
+
+  prevStep() {
+    this.step--;
   }
 
   public get currentUser(): User {

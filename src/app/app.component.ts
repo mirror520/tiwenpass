@@ -28,6 +28,8 @@ export class AppComponent {
       });
 
       updates.available.subscribe((event) => {
+        console.log('Service worker 有新的版本');
+
         const bottomSheetRef = this.bottomSheet.open(CheckUpdateBottomSheetComponent);
 
         bottomSheetRef.afterDismissed().subscribe(

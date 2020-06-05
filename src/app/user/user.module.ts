@@ -5,6 +5,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -28,6 +29,7 @@ import { DuplicateVerificationDialogComponent } from './login/duplicate-verifica
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
+    MatExpansionModule,
     MatInputModule,
     MatIconModule,
     MatTabsModule,
