@@ -1,11 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { timer } from 'rxjs';
-import { map, takeWhile } from 'rxjs/operators';
+import { map, takeWhile, switchMap } from 'rxjs/operators';
 
 import { UserService } from '../user.service';
 import { Result } from '../../model/result';
@@ -39,12 +39,18 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar,
     private userService: UserService,
   ) {
+    let token;
+
     this.activatedRoute.queryParams.subscribe(params => {
-      let token = params['t'];
-      if (token) {
-        this.loginGuestUser(token)
-      }
+      token = params['t'];
     });
+
+    if (!token)
+      token = this.activatedRoute.snapshot.paramMap.get('token');
+
+    if (token) {
+      this.loginGuestUser(token);
+    }
 
     let account = localStorage.getItem("account");
     let password = localStorage.getItem("password");

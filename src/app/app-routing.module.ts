@@ -5,6 +5,7 @@ import { LoginComponent } from './user/login/login.component';
 
 const routes: Routes = [
     { path: '', component: LoginComponent },
+    { path: 't/:token', component: LoginComponent },
 ];
 
 @NgModule({

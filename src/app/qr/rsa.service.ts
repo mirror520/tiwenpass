@@ -8,8 +8,7 @@ import * as JsEncryptModule from 'jsencrypt';
 import { environment } from '../../environments/environment';
 import { UserService } from '../user/user.service';
 import { Result } from '../model/result';
-import { Building } from './models/building';
-import { Location } from './models/location';
+import { Building, Location } from './models/location';
 import { Department } from '../user/model/department';
 import { Visit } from './models/visit';
 
@@ -67,26 +66,29 @@ export class RsaService {
     );
   }
 
-  getLocations(): Observable<Location[]> {
-    return this.http.get(this.baseUrl + '/api/v1/visits/locations', {
+  getBuildings(): Observable<Building[]> {
+    return this.http.get(this.baseUrl + '/api/v1/visits/buildings', {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`)
     }).pipe(
-      map((value: Location[]) => {
-        const locations: Location[] = new Array();
+      map((value: Building[]) => {
+        const buildings: Building[] = new Array();
         const currentDepartment: Department = this.userService.currentUser.employee.currentDepartment();
+        const building = new Building();
+        building.id = 0;
+        building.building = "所屬單位";
+        building.locations = new Array();
+        buildings.push(building)
+
         const location = new Location();
         location.id = 0;
         location.location = currentDepartment.department;
-        location.building = new Building();
-        location.building.building = "所屬單位";
+        building.locations.push(location);
 
-        locations.push(location)
-
-        for (const location of value) {
-          locations.push(Object.assign(new Location(), location));
+        for (const building of value) {
+          buildings.push(Object.assign(new Building(), building));
         }
 
-        return locations;
+        return buildings;
       })
     )
   }

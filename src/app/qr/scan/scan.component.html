@@ -15,32 +15,35 @@
     </mat-toolbar>
   </header>
   <mat-sidenav #sidenav id="sidenav">
-    <mat-form-field class="form-field">
-      <mat-select placeholder="特定地點" [(value)]="currentLocation">
-        <mat-option *ngFor="let location of locations | async" [value]="location">
-          [{{ location.building?.building }}][{{ location.location }}]
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="form-field">
-      <mat-select placeholder="選擇攝影機" [(value)]="currentDevice">
-        <mat-option *ngFor="let availableDevice of availableDevices" [value]="availableDevice">
-          {{ availableDevice.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
     <button mat-raised-button color="primary" class="form-field" (click)="logout()">
       登出
     </button>
   </mat-sidenav>
   <div class="scan-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
     <mat-card fxFlexAlign="center">
-      <p *ngIf="currentLocation">
-        目前所在的地點是：{{ currentLocation.building?.building }}{{ currentLocation.location }}
-      </p>
-      <p *ngIf="!currentLocation">
-        目前所在的地點是：洽公單位
-      </p>
+      <div class="info-container">
+        <mat-form-field class="form-field">
+          <mat-select #locationSelect placeholder="特定場所" [(value)]="currentLocation">
+            <mat-optgroup *ngFor="let building of buildings" 
+                          [label]="building.building">
+              <mat-option *ngFor="let location of building?.locations" [value]="location">
+                {{ location.location }}
+              </mat-option>
+            </mat-optgroup>
+          </mat-select>
+        </mat-form-field>
+        <span class="spacer"></span>
+        <button mat-icon-button [matMenuTriggerFor]="menu"
+                matTooltip="切換相機鏡頭" matTooltipPosition="left">
+          <mat-icon>flip_camera_ios</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button *ngFor="let availableDevice of availableDevices" mat-menu-item 
+                  (click)="currentDevice = availableDevice">
+            <span>{{ availableDevice.label }}</span>
+          </button>
+        </mat-menu>
+      </div>
       <mat-card-content>
         <zxing-scanner class="scanner"
           [(device)]="currentDevice"
@@ -48,7 +51,8 @@
           (camerasFound)="onCamerasFound($event)"
           (scanSuccess)="scanSuccessHandler($event)"
         ></zxing-scanner>
-        <mat-form-field>
+        <mat-form-field class="form-field">
+          <mat-label>條碼輸入</mat-label>
           <input #scanner matInput type="password" (keyup.enter)="scanSuccessHandler(scanner.value)"/>
         </mat-form-field>
       </mat-card-content>

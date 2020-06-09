@@ -1,11 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { isNationalIdentificationNumberValid } from 'taiwan-id-validator';
-import { Observable } from 'rxjs';
 
 import { RsaService } from '../rsa.service';
 import { UserService } from '../../user/user.service';
@@ -14,7 +13,7 @@ import { User } from '../../user/model/user';
 import { Guest } from '../../user/model/guest';
 import { Token } from '../../user/model/token';
 import { Visit } from '../models/visit';
-import { Location } from '../models/location';
+import { Building, Location } from '../models/location';
 import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
 import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-dialog.component';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
@@ -30,7 +29,7 @@ export class ScanComponent implements OnInit {
   private _currentDevice: MediaDeviceInfo = null;
 
   availableDevices: MediaDeviceInfo[];
-  locations: Observable<Location[]>;
+  buildings: Building[];
   scanEnabled = true;
   lastUsername: string;
 
@@ -49,10 +48,30 @@ export class ScanComponent implements OnInit {
     this.rsaService.getTodayPrivkey().subscribe({
       next: (value) => this.rsaService.privkey = value.data,
       error: (err) => this.faultHandler(err),
-      complete: () => console.log('complete')
+      complete: () => console.log('成功取得今天的私鑰')
     });
 
-    this.locations = this.rsaService.getLocations();
+    this.rsaService.getBuildings().subscribe({
+      next: (value) => this.buildings = value,
+      error: (err) => console.error(err),
+      complete: () => {
+        let locationID = +localStorage.getItem("location_id");
+
+        if (locationID == 0) {
+          this.currentLocation = this.buildings[0].locations[0];
+        }
+
+        for (let building of this.buildings) {
+          for (let location of building.locations) {
+            if (location.id == locationID) {
+              this.currentLocation = location;
+              return;
+            }
+          }
+        }
+
+      }
+    });
   }
 
   visit(username: string) {
@@ -111,6 +130,10 @@ export class ScanComponent implements OnInit {
         duration: 2000
       });
     }
+  }
+
+  switchDevice(value) {
+    console.log(value);
   }
 
   focusScanner() {
@@ -217,6 +240,8 @@ export class ScanComponent implements OnInit {
   }
   public set currentLocation(value: Location) {
     this._currentLocation = value;
+
+    localStorage.setItem("location_id", value.id.toString());
   }
 
   public get currentDevice(): MediaDeviceInfo {
