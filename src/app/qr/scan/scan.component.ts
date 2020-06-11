@@ -4,7 +4,10 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { isNationalIdentificationNumberValid } from 'taiwan-id-validator';
+import { 
+  isNationalIdentificationNumberValid, 
+  isResidentCertificateNumberValid 
+} from 'taiwan-id-validator';
 
 import { RsaService } from '../rsa.service';
 import { UserService } from '../../user/user.service';
@@ -69,7 +72,6 @@ export class ScanComponent implements OnInit {
             }
           }
         }
-
       }
     });
   }
@@ -110,7 +112,8 @@ export class ScanComponent implements OnInit {
     let username: string;
     let success = false;
 
-    if (isNationalIdentificationNumberValid(result)) {
+    if (isNationalIdentificationNumberValid(result) || 
+        isResidentCertificateNumberValid(result)) {
       username = result;
       success = true;
     }
@@ -130,10 +133,6 @@ export class ScanComponent implements OnInit {
         duration: 2000
       });
     }
-  }
-
-  switchDevice(value) {
-    console.log(value);
   }
 
   focusScanner() {
