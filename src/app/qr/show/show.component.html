@@ -1,13 +1,22 @@
 <mat-toolbar id="toolbar" color="primary">
   <span class="toolbar-text">QR Code ({{ qrCreatedDate | date: 'yyyy/MM/dd' }})</span>
   <span class="spacer"></span>
-  <div *ngIf="currentUser.type == 0">
-    切換為掃描器
-    <button mat-icon-button matTooltip="QR Code"
+  <button mat-icon-button [matMenuTriggerFor]="menu"
+          matTooltip="選單">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item 
+            [disabled]="currentUser.type != 0"
             (click)="switchQRCodeScanner()">
-      <mat-icon>camera</mat-icon>
+      <mat-icon>qr_code_scanner</mat-icon>
+      <span>切換為條碼掃描器</span>
     </button>
-  </div>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
+      <span>登出</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>
 <div class="qrcode-page" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="50px">
   <mat-card fxFlexAlign="center">
@@ -16,9 +25,6 @@
       <span>提醒您，可以使用最後一封驗證簡訊網址再次登入</span>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="logout()">
-        登出
-      </button>
     </mat-card-actions>
   </mat-card>
 </div>

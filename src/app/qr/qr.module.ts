@@ -12,7 +12,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -42,7 +41,6 @@ import { ScanSuccessDialogComponent } from './scan/scan-success-dialog/scan-succ
     MatInputModule,
     MatMenuModule,
     MatSelectModule,
-    MatSidenavModule,
     MatSnackBarModule,
     MatToolbarModule,
     MatTooltipModule,

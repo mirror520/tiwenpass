@@ -92,6 +92,7 @@ export class ScanComponent implements OnInit {
   logout() {
     localStorage.removeItem("account");
     localStorage.removeItem("password");
+    localStorage.removeItem("phone_token");
 
     this.currentUser = null;
     this.router.navigate(['/']);

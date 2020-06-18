@@ -24,6 +24,8 @@ export class ShowComponent {
   qrCodeImageUrl: Observable<SafeUrl> = this.rsaService.getGuestUserQRCode(this.currentUser.id);
 
   logout() {
+    localStorage.removeItem("account");
+    localStorage.removeItem("password");
     localStorage.removeItem("phone_token");
 
     this.currentUser = null;
