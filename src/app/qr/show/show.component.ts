@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SafeUrl } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 import { RsaService } from '../rsa.service';
 import { UserService } from '../../user/user.service';
 import { User } from '../../user/model/user';
-import { Observable } from 'rxjs';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-show',

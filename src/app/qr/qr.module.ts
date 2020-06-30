@@ -5,8 +5,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { QrRoutingModule } from './qr-routing.module';
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,7 +36,9 @@ import { ScanSuccessDialogComponent } from './scan/scan-success-dialog/scan-succ
     FlexLayoutModule,
     ZXingScannerModule,
     QrRoutingModule,
+    MatAutocompleteModule,
     MatCardModule,
+    MatChipsModule,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,

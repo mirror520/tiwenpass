@@ -30,11 +30,11 @@
         </mat-select>
       </mat-form-field>
       <span class="spacer"></span>
-      <button mat-icon-button [matMenuTriggerFor]="menu"
+      <button mat-icon-button [matMenuTriggerFor]="cameraMenu"
               matTooltip="切換相機鏡頭" matTooltipPosition="left">
         <mat-icon>flip_camera_ios</mat-icon>
       </button>
-      <mat-menu #menu="matMenu">
+      <mat-menu #cameraMenu="matMenu">
         <button *ngFor="let availableDevice of availableDevices" mat-menu-item 
                 (click)="currentDevice = availableDevice">
           <span>{{ availableDevice.label }}</span>
