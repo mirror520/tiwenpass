@@ -25,6 +25,27 @@
       <span>提醒您，可以使用最後一封驗證簡訊網址再次登入</span>
     </mat-card-content>
     <mat-card-actions>
+       <mat-form-field class="form-field">
+        <mat-chip-list #chipList aria-label="加入同行者">
+          <mat-chip *ngFor="let follower of followers" color="primary"
+                    [selectable]="selectable" [removable]="removable" 
+                    (removed)="remove(follower)">
+            {{ follower }}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+          <input #followerInput placeholder="加入同行者 (請使用 ENTER 隔開)"
+                 [formControl]="followerCtrl"
+                 [matAutocomplete]="auto"
+                 [matChipInputFor]="chipList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 (matChipInputTokenEnd)="add($event)">
+        </mat-chip-list>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+          <mat-option *ngFor="let follower of filteredFollowers | async" [value]="follower">
+            {{ follower }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
     </mat-card-actions>
   </mat-card>
 </div>

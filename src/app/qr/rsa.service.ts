@@ -11,6 +11,7 @@ import { Result } from '../model/result';
 import { Building, Location } from './models/location';
 import { Department } from '../user/model/department';
 import { Visit } from './models/visit';
+import { Follower } from './models/follower';
 
 @Injectable({
   providedIn: 'root'
@@ -40,10 +41,15 @@ export class RsaService {
     );
   }
 
-  getGuestUserQRCode(user_id: number): Observable<SafeUrl> {
+  getGuestUserQRCode(user_id: number, followers?: string[]): Observable<SafeUrl> {
+    const params = {
+      'followers': followers.toString()
+    };
+
     return this.http.get(this.baseUrl + `/api/v1/guests/${user_id}/qr`, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`),
-      responseType: 'blob'
+      responseType: 'blob',
+      params: params
     }).pipe(
       map((value: Blob) => {
         this.qrCreatedDate = new Date();
@@ -54,9 +60,10 @@ export class RsaService {
     );
   }
 
-  visit(username: string, location_id: number): Observable<Result<Visit>> {
+  visit(username: string, location_id: number, followers?: Follower[]): Observable<Result<Visit>> {
     const params = {
-      'id': location_id
+      'location_id': location_id,
+      'followers': followers
     };
 
     return this.http.put(this.baseUrl + `/api/v1/visits/users/${username}`, params, {

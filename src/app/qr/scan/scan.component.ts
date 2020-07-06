@@ -4,11 +4,14 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { 
   isNationalIdentificationNumberValid, 
   isResidentCertificateNumberValid 
 } from 'taiwan-id-validator';
 
+import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
+import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-dialog.component';
 import { RsaService } from '../rsa.service';
 import { UserService } from '../../user/user.service';
 import { Result } from '../../model/result';
@@ -16,10 +19,8 @@ import { User } from '../../user/model/user';
 import { Guest } from '../../user/model/guest';
 import { Token } from '../../user/model/token';
 import { Visit } from '../models/visit';
+import { Follower} from '../models/follower';
 import { Building, Location } from '../models/location';
-import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
-import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-dialog.component';
-import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 
 @Component({
   selector: 'app-scan',
@@ -35,6 +36,7 @@ export class ScanComponent implements OnInit {
   buildings: Building[];
   scanEnabled = true;
   lastUsername: string;
+  lastFollowers: Follower[];
 
   @ViewChild(ZXingScannerComponent) qrScanner: ZXingScannerComponent;
   @ViewChild(MatInput) scanner: MatInput;
@@ -76,14 +78,15 @@ export class ScanComponent implements OnInit {
     });
   }
 
-  visit(username: string) {
+  visit(username: string, followers?: Follower[]) {
     let locationID = 0;
     if (this.currentLocation)
       locationID = this.currentLocation.id
 
     this.lastUsername = username;
+    this.lastFollowers = followers;
     
-    this.rsaService.visit(username, locationID).subscribe({
+    this.rsaService.visit(username, locationID, followers).subscribe({
       next: (value) => this.visitResultHandler(value),
       error: (err) => this.faultHandler(err),
     });
@@ -111,6 +114,7 @@ export class ScanComponent implements OnInit {
     }
 
     let username: string;
+    let followers: Follower[];
     let success = false;
 
     if (isNationalIdentificationNumberValid(result) || 
@@ -123,12 +127,20 @@ export class ScanComponent implements OnInit {
     if (user) {
       let info = user.split(",")
       username = info[1];
+
+      if (info.length > 2) {
+        followers = new Array();
+        for (let value of info.slice(2)) {
+          followers.push(new Follower(value));
+        }
+      }
+
       success = true;
     }
 
     if ((success) && (this.scanEnabled)) {
       this.scanEnabled = false;
-      this.visit(username);
+      this.visit(username, followers);
     } else {
       this.snackBar.open('您使用無效或已經過期的條碼', '確定', {
         duration: 2000
@@ -210,9 +222,10 @@ export class ScanComponent implements OnInit {
     this.userService.currentUser.token = token;
 
     if (this.lastUsername) {
-      this.visit(this.lastUsername);
+      this.visit(this.lastUsername, this.lastFollowers);
 
       this.lastUsername = null;
+      this.lastFollowers = null;
     }
   }
 

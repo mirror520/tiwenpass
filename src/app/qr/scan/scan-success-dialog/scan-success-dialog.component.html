@@ -3,7 +3,8 @@
     訪客：{{ data.guest.name }} <br>
     洽公單位：{{ data.department_employee.department.department }} <br>
     接待人員：{{ data.department_employee.employee.name }} <br>
-    地點： {{ data.location?.building.building }} {{ data.location?.location }}
+    地點：{{ data.location?.building.building }} {{ data.location?.location }} <br>
+    同行者人數：{{ data.followers.length }} 人
 </div>
 <div mat-dialog-actions>
     {{ closeTime }} 秒後關閉視窗

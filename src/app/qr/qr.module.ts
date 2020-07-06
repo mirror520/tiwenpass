@@ -27,7 +27,8 @@ import { ScanSuccessDialogComponent } from './scan/scan-success-dialog/scan-succ
   declarations: [
     ScanComponent, 
     ShowComponent, 
-    GuestRegisterDialogComponent, ScanSuccessDialogComponent
+    GuestRegisterDialogComponent, 
+    ScanSuccessDialogComponent, 
   ],
   imports: [
     CommonModule,

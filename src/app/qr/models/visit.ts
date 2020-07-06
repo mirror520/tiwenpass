@@ -1,12 +1,14 @@
-import { DepartmentEmployee } from '../../user/model/department-employee';
 import { Location } from './location';
+import { Follower } from './follower';
 import { User } from '../../user/model/user';
+import { DepartmentEmployee } from '../../user/model/department-employee';
 
 export class Visit {
     private _id: number;
     private _guest: User;
     private _department_employee: DepartmentEmployee;
     private _location: Location;
+    private _followers: Follower[];
 
     public get id(): number {
         return this._id;
@@ -43,5 +45,19 @@ export class Visit {
             this._location = null;
 
         this._location = Object.assign(new Location(), value)
+    }
+
+    public get followers(): Follower[] {
+        return this._followers;
+    }
+    public set followers(value: Follower[]) {
+        const followers: Follower[] = new Array();
+        if (value != null) {
+            for (const follower of value) {
+                followers.push(Object.assign(new Follower(), follower));
+            }
+        }
+
+        this._followers = followers;
     }
 }
