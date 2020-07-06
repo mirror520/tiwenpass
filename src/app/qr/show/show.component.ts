@@ -7,7 +7,6 @@ import { map, startWith } from 'rxjs/operators';
 
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { RsaService } from '../rsa.service';
@@ -58,32 +57,27 @@ export class ShowComponent {
     this.qrCodeImageUrl = this.rsaService.getGuestUserQRCode(this.currentUser.id, this.followers);
   }
 
-  add(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value;
+  addFollower(follower: string) {
+    if (!this.followers.includes(follower)) {
+      this.followers.push(follower);
+      localStorage.setItem("followers", JSON.stringify(this.followers));
 
-    // Add our followers
+      this.qrCodeImageUrl = this.rsaService.getGuestUserQRCode(this.currentUser.id, this.followers);
+    }
+
+    if (!this.allFollowers.includes(follower)) {
+      this.allFollowers.push(follower);
+      localStorage.setItem("all_followers", JSON.stringify(this.allFollowers));
+    }
+  }
+
+  add(value: string): void {
     if ((value || '').trim()) {
       let follower = value.trim();
-
-      if (!this.followers.includes(follower)) {
-        this.followers.push(follower);
-        localStorage.setItem("followers", JSON.stringify(this.followers));
-
-        this.qrCodeImageUrl = this.rsaService.getGuestUserQRCode(this.currentUser.id, this.followers);
-      }
-
-      if (!this.allFollowers.includes(follower)) {
-        this.allFollowers.push(follower);
-        localStorage.setItem("all_followers", JSON.stringify(this.allFollowers));
-      }
+      this.addFollower(follower);
     }
 
-    // Reset the input value
-    if (input) {
-      input.value = '';
-    }
-
+    this.followerInput.nativeElement.value = '';
     this.followerCtrl.setValue(null);
   }
 
@@ -101,12 +95,8 @@ export class ShowComponent {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    if (!this.followers.includes(event.option.viewValue)) {
-      this.followers.push(event.option.viewValue);
-      localStorage.setItem("followers", JSON.stringify(this.followers));
-
-      this.qrCodeImageUrl = this.rsaService.getGuestUserQRCode(this.currentUser.id, this.followers);
-    }
+    let follower = event.option.viewValue;
+    this.addFollower(follower);
 
     this.followerInput.nativeElement.value = '';
     this.followerCtrl.setValue(null);
