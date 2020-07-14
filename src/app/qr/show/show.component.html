@@ -24,33 +24,48 @@
       <img class="qrcode-image" [src]="qrCodeImageUrl | async">
     </mat-card-content>
     <mat-card-actions>
-      <div class="follower-container">
-        <mat-form-field class="form-field">
-          <mat-chip-list #chipList aria-label="加入同行者">
-            <mat-chip *ngFor="let follower of followers" color="primary"
-                      [selectable]="selectable" [removable]="removable" 
-                      (removed)="remove(follower)">
-              {{ follower }}
-              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-            </mat-chip>
-            <input #followerInput placeholder="請輸入同行者姓名"
-                   [formControl]="followerCtrl"
-                   [matAutocomplete]="auto"
-                   [matChipInputFor]="chipList"
-                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                   (matChipInputTokenEnd)="add(followerInput.value)">
-          </mat-chip-list>
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-            <mat-option *ngFor="let follower of filteredFollowers | async" [value]="follower">
-              {{ follower }}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-        <span class="spacer"></span>
-        <button mat-raised-button color="primary" (click)="add(followerInput.value)">
-          加入同行者
-        </button>
-      </div>
+      <mat-form-field class="form-field">
+        <mat-chip-list #chipList aria-label="加入同行者">
+          <mat-chip *ngFor="let follower of followers" color="primary"
+                    [selectable]="selectable" [removable]="removable" 
+                    (removed)="remove(follower)">
+            {{ follower }}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+          <input #followerInput placeholder="請輸入同行者姓名"
+                 [formControl]="followerCtrl"
+                 [matAutocomplete]="auto"
+                 [matChipInputFor]="chipList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 (matChipInputTokenEnd)="add(followerInput.value)">
+        </mat-chip-list>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+          <mat-option *ngFor="let follower of filteredFollowers | async" [value]="follower">
+            {{ follower }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <button mat-raised-button color="primary" 
+              (click)="add(followerInput.value)">
+        加入同行者
+      </button>
     </mat-card-actions>
   </mat-card>
 </div>
+
+<img class="mat-fab-bottom-right" src="assets/img/taichung-shopping.svg"
+     [matMenuTriggerFor]="shareMenu">
+<mat-menu #shareMenu="matMenu" yPosition="above">
+  <a mat-menu-item href="https://funtaichung.tw/2020shopping" target="_blank">
+    <mat-icon>home</mat-icon>
+    <span>活動網站</span>
+  </a>
+  <a mat-menu-item href="https://apps.apple.com/tw/app/id1499808545" target="_blank">
+    <mat-icon>phone_iphone</mat-icon>
+    <span>App Store (iOS)</span>
+  </a>
+  <a mat-menu-item href="https://play.google.com/store/apps/details?id=tw.com.event.funtaichung" target="_blank">
+    <mat-icon>android</mat-icon>
+    <span>Google Play (Android)</span>
+  </a>
+</mat-menu>

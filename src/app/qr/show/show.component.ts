@@ -1,13 +1,12 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { SafeUrl } from '@angular/platform-browser';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SafeUrl } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 import { RsaService } from '../rsa.service';
 import { UserService } from '../../user/user.service';
