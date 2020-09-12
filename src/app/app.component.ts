@@ -19,7 +19,7 @@ export class AppComponent {
   {
     if (updates.isEnabled) {
       const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable === true));
-      const checkInterval$ = interval(1 * 1 * 60 * 1000);
+      const checkInterval$ = interval(1 * 10 * 60 * 1000);
       const checkAppIsStableAtInterval$ = concat(appIsStable$, checkInterval$);
 
       checkAppIsStableAtInterval$.subscribe(() => {

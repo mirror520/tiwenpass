@@ -179,7 +179,7 @@ export class ScanComponent implements OnInit {
     if (error.status === 401) {
       this.userService.refreshToken().subscribe({
         next: (value) => this.refreshTokenHandler(value),
-        error: (err) => this.faultHandler(err),
+        error: (err) => console.error(err),
         complete: () => console.log('complete')
       });
     }
