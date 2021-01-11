@@ -191,7 +191,8 @@ export class ScanComponent implements OnInit {
       const dialogRef = this.dialog.open(GuestRegisterDialogComponent, {
         width: '80%',
         maxWidth: '600px',
-        data: guest
+        data: guest,
+        disableClose: true
       });
 
       dialogRef.afterClosed().subscribe((user: User) => {
