@@ -90,8 +90,7 @@ export class UserService {
     const params = {
       'user_id': guest.user_id,
       'phone': guest.phone,
-      'phone_otp': guest.phone_otp,
-      'phone_token': guest.phone_token
+      'phone_otp': guest.phone_otp
     }
 
     return this.http.patch(this.baseUrl + '/api/v1/guests/register/phone/otp/verify', params).pipe(

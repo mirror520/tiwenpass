@@ -198,7 +198,7 @@ export class ScanComponent implements OnInit {
       dialogRef.afterClosed().subscribe((user: User) => {
         this.scanEnabled = true;
 
-        if (user) {
+        if ((user) && (user instanceof User)) {
           this.scanEnabled = false;
           this.visit(user.username);
 
