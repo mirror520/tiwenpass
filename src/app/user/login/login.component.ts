@@ -245,6 +245,12 @@ export class LoginComponent implements OnInit {
         }
       });
     }
+
+    if (error.status === 429) {
+      this.snackBar.open(info, '確定', {
+        duration: 2000
+      });     
+    }
   }
 
   private sendGuestPhoneOTPResultHandler(result: Result<Guest>) {
@@ -291,7 +297,7 @@ export class LoginComponent implements OnInit {
     let failureResult: Result<User>;
     let info = error.statusText;
 
-    if ((error.status === 401) || (error.status === 422)) {
+    if ((error.status === 401) || (error.status === 422) || (error.status === 429)) {
       failureResult = Object.assign(new Result(), error.error);
       info = failureResult.info[0];
     }
