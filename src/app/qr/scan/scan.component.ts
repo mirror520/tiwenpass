@@ -117,25 +117,25 @@ export class ScanComponent implements OnInit {
     let followers: Follower[];
     let success = false;
 
-    if (isNationalIdentificationNumberValid(result) || 
-        isResidentCertificateNumberValid(result)) {
-      username = result;
+    if (isNationalIdentificationNumberValid(result.toUpperCase()) || 
+        isResidentCertificateNumberValid(result.toUpperCase())) {
+      username = result.toUpperCase();
       success = true;
-    }
+    } else {
+      const user = this.rsaService.decrypt(result);
+      if (user) {
+        let info = user.split(",")
+        username = info[1];
 
-    const user = this.rsaService.decrypt(result);
-    if (user) {
-      let info = user.split(",")
-      username = info[1];
-
-      if (info.length > 2) {
-        followers = new Array();
-        for (let value of info.slice(2)) {
-          followers.push(new Follower(value));
+        if (info.length > 2) {
+          followers = new Array();
+          for (let value of info.slice(2)) {
+            followers.push(new Follower(value));
+          }
         }
-      }
 
-      success = true;
+        success = true;
+      }
     }
 
     if ((success) && (this.scanEnabled)) {
