@@ -20,6 +20,7 @@ import { Guest } from '../../user/model/guest';
 import { Token } from '../../user/model/token';
 import { Visit } from '../models/visit';
 import { Follower} from '../models/follower';
+import { NhiUser } from '../models/nhi-user';
 import { Building, Location } from '../models/location';
 
 @Component({
@@ -37,6 +38,8 @@ export class ScanComponent implements OnInit {
   scanEnabled = true;
   lastUsername: string;
   lastFollowers: Follower[];
+  currentGuest: Guest;
+  nhiEnabled = false;
 
   @ViewChild(ZXingScannerComponent) qrScanner: ZXingScannerComponent;
   @ViewChild(MatInput) scanner: MatInput;
@@ -50,6 +53,12 @@ export class ScanComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.rsaService.checkNhiService().subscribe({
+      next: (value) => this.nhiEnabled = true,
+      error: (err) => console.error(err),
+      complete: () => console.log("完成健保卡服務連線測試")
+    })
+
     this.rsaService.getTodayPrivkey().subscribe({
       next: (value) => this.rsaService.privkey = value.data,
       error: (err) => this.faultHandler(err),
@@ -119,7 +128,11 @@ export class ScanComponent implements OnInit {
 
     if (isNationalIdentificationNumberValid(result.toUpperCase()) || 
         isResidentCertificateNumberValid(result.toUpperCase())) {
-      username = result.toUpperCase();
+      let guest = new Guest();
+      guest.id_card = result.toUpperCase();
+      this.currentGuest = guest;
+
+      username = guest.id_card;
       success = true;
     } else {
       const user = this.rsaService.decrypt(result);
@@ -158,6 +171,13 @@ export class ScanComponent implements OnInit {
     this.router.navigate(['/qr/show']);
   }
 
+  loadNhiUser() {
+    this.rsaService.getNhiUser().subscribe({
+      next: (value) => this.getNhiUserResultHandler(value),
+      error: (err) => this.faultHandler(err),
+    });
+  }
+
   private visitResultHandler(result: Result<Visit>) {
     const visit: Visit = Object.assign(new Visit(), result.data);
 
@@ -170,6 +190,17 @@ export class ScanComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: any) => {
       this.scanEnabled = true;
     });
+  }
+
+  private getNhiUserResultHandler(result: Result<NhiUser>) {
+    const guest = new Guest();
+    guest.name = result.data.name;
+    guest.id_card = result.data.id_card;
+
+    this.currentGuest = guest;
+
+    this.scanEnabled = false;
+    this.visit(guest.id_card);
   }
 
   private faultHandler(error: HttpErrorResponse) {
@@ -185,18 +216,16 @@ export class ScanComponent implements OnInit {
     }
 
     if (error.status === 409) {
-      const guest = new Guest();
-      guest.id_card = result.data;
-
       const dialogRef = this.dialog.open(GuestRegisterDialogComponent, {
         width: '80%',
         maxWidth: '600px',
-        data: guest,
+        data: this.currentGuest,
         disableClose: true
       });
 
       dialogRef.afterClosed().subscribe((user: User) => {
         this.scanEnabled = true;
+        this.currentGuest = null;
 
         if ((user) && (user instanceof User)) {
           this.scanEnabled = false;
@@ -206,6 +235,8 @@ export class ScanComponent implements OnInit {
             duration: 2000
           });
         }
+
+        this.focusScanner();
       });
     }
 

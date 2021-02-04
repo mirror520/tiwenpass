@@ -58,6 +58,9 @@
       <button mat-raised-button color="primary" (click)="focusScanner()">
         使用掃描器
       </button>
+      <button mat-raised-button color="primary" (click)="loadNhiUser()" [disabled]="!nhiEnabled">
+        讀取健保卡
+      </button>
     </mat-card-actions>
   </mat-card>
 </div>

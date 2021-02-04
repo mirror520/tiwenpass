@@ -43,6 +43,8 @@ export class GuestRegisterDialogComponent implements OnInit {
 
     this.registerGuestUserFormGroup.get("id_card").disable();
     this.registerGuestUserFormGroup.get("id_card").setValue(this.data.id_card);
+
+    this.registerGuestUserFormGroup.get("name").setValue(this.data.name);
   }
 
   registerGuestUser(name: string, phone: string, id_card: string) {

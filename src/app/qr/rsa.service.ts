@@ -12,6 +12,7 @@ import { Building, Location } from './models/location';
 import { Department } from '../user/model/department';
 import { Visit } from './models/visit';
 import { Follower } from './models/follower';
+import { NhiUser } from './models/nhi-user';
 
 @Injectable({
   providedIn: 'root'
@@ -102,6 +103,16 @@ export class RsaService {
 
   decrypt(ciphertext: string): string {
     return this.jsEncrypt.decrypt(ciphertext);
+  }
+
+  checkNhiService(): Observable<any> {
+    return this.http.get('https://nhi.localhost:5001/nhi/ping');
+  }
+
+  getNhiUser(): Observable<Result<NhiUser>> {
+    return this.http.get('https://nhi.localhost:5001/nhi/user').pipe(
+      map((value: Result<NhiUser>) => Object.assign(new Result<NhiUser>(), value))
+    );
   }
 
   set privkey(value: string) {
