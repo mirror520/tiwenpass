@@ -176,6 +176,8 @@ export class ScanComponent implements OnInit {
       next: (value) => this.getNhiUserResultHandler(value),
       error: (err) => this.faultHandler(err),
     });
+
+    this.focusScanner();
   }
 
   private visitResultHandler(result: Result<Visit>) {
@@ -189,6 +191,7 @@ export class ScanComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       this.scanEnabled = true;
+      this.focusScanner();
     });
   }
 
