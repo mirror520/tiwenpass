@@ -6,7 +6,7 @@ export class NhiUser {
         return this._name;
     }
     public set name(value: string) {
-        this._name = value;
+        this._name = value.trim();
     }
 
     public get id_card(): string {
