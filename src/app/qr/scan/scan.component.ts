@@ -8,7 +8,7 @@ import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { 
   isNationalIdentificationNumberValid, 
   isResidentCertificateNumberValid 
-} from 'taiwan-id-validator';
+} from 'taiwan-id-validator2';
 
 import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
 import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-dialog.component';
