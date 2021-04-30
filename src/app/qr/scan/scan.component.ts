@@ -19,6 +19,7 @@ import { User } from '../../user/model/user';
 import { Guest } from '../../user/model/guest';
 import { Token } from '../../user/model/token';
 import { Visit } from '../models/visit';
+import { TcpassVisit } from '../models/tcpass-visit';
 import { Follower} from '../models/follower';
 import { NhiUser } from '../models/nhi-user';
 import { Building, Location } from '../models/location';
@@ -36,6 +37,7 @@ export class ScanComponent implements OnInit {
   availableDevices: MediaDeviceInfo[];
   buildings: Building[];
   scanEnabled = true;
+  lastUUID: string;
   lastUsername: string;
   lastFollowers: Follower[];
   currentGuest: Guest;
@@ -101,6 +103,19 @@ export class ScanComponent implements OnInit {
     });
   }
 
+  tcpassVisit(uuid: string) {
+    let locationID = 0;
+    if (this.currentLocation)
+      locationID = this.currentLocation.id
+
+    this.lastUUID = uuid;
+    
+    this.rsaService.tcpassVisit(uuid, locationID).subscribe({
+      next: (value) => this.tcpassVisitResultHandler(value),
+      error: (err) => this.faultHandler(err),
+    });
+  }
+
   logout() {
     localStorage.removeItem("account");
     localStorage.removeItem("password");
@@ -122,6 +137,7 @@ export class ScanComponent implements OnInit {
       this.scanner.value = "";
     }
 
+    let uuid: string;
     let username: string;
     let followers: Follower[];
     let success = false;
@@ -148,6 +164,14 @@ export class ScanComponent implements OnInit {
         }
 
         success = true;
+      }
+
+      // Dirty Code
+      if (!success) {
+        uuid = result;
+        this.scanEnabled = false;
+        this.tcpassVisit(uuid);
+        return;
       }
     }
 
@@ -195,6 +219,21 @@ export class ScanComponent implements OnInit {
     });
   }
 
+  private tcpassVisitResultHandler(result: Result<TcpassVisit>) {
+    const visit: TcpassVisit = Object.assign(new TcpassVisit(), result.data);
+
+    const dialogRef = this.dialog.open(ScanSuccessDialogComponent, {
+      width: '80%',
+      maxWidth: '600px',
+      data: visit
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      this.scanEnabled = true;
+      this.focusScanner();
+    });
+  }
+
   private getNhiUserResultHandler(result: Result<NhiUser>) {
     const guest = new Guest();
     guest.name = result.data.name;
@@ -208,6 +247,11 @@ export class ScanComponent implements OnInit {
 
   private faultHandler(error: HttpErrorResponse) {
     const result: Result<any> = Object.assign(new Result(), error.error);
+
+    if (!result.info) {
+      this.scanEnabled = true;
+      return;
+    }
     const info = result.info[0]
 
     if (error.status === 401) {
@@ -261,6 +305,12 @@ export class ScanComponent implements OnInit {
 
       this.lastUsername = null;
       this.lastFollowers = null;
+    }
+
+    if (this.lastUUID) {
+      this.tcpassVisit(this.lastUUID);
+
+      this.lastUUID = null;
     }
   }
 
