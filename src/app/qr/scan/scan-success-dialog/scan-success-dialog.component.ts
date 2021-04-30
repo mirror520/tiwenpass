@@ -4,6 +4,7 @@ import { timer } from 'rxjs';
 import { map, takeWhile } from 'rxjs/operators';
 
 import { Visit } from '../../models/visit';
+import { TcpassVisit } from '../../models/tcpass-visit';
 
 @Component({
   selector: 'app-scan-success-dialog',
@@ -12,11 +13,22 @@ import { Visit } from '../../models/visit';
 })
 export class ScanSuccessDialogComponent implements OnInit {
   closeTime: number = 0;
+  isTcpass: boolean;
+  visit: Visit;
+  tcpass: TcpassVisit;
 
   constructor(
     public dialogRef: MatDialogRef<ScanSuccessDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Visit
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: Visit | TcpassVisit,
+  ) {
+    if (data instanceof Visit) {
+      this.isTcpass = false;
+      this.visit = data;
+    } else {
+      this.isTcpass = true;
+      this.tcpass = data;
+    }
+  }
 
   ngOnInit() {
     this.closeTime = 1;

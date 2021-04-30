@@ -1,10 +1,18 @@
 <h1 mat-dialog-title>登錄成功</h1>
-<div mat-dialog-content>
-    訪客：{{ data.guest.name }} <br>
-    洽公單位：{{ data.department_employee.department.department }} <br>
-    接待人員：{{ data.department_employee.employee.name }} <br>
-    地點：{{ data.location?.building.building }} {{ data.location?.location }} <br>
-    同行者人數：{{ data.followers.length }} 人
+<div *ngIf="!isTcpass" mat-dialog-content>
+    實名登記 APP<br>
+    訪客：{{ visit.guest.name }} <br>
+    洽公單位：{{ visit.department_employee.department.department }} <br>
+    接待人員：{{ visit.department_employee.employee.name }} <br>
+    地點：{{ visit.location?.building.building }} {{ visit.location?.location }} <br>
+    同行者人數：{{ visit?.followers.length }} 人
+</div>
+<div *ngIf="isTcpass" mat-dialog-content>
+    任意條碼 (含臺中 e 指通數位市民卡)<br>
+    洽公單位：{{ tcpass.department_employee.department.department }} <br>
+    接待人員：{{ tcpass.department_employee.employee.name }} <br>
+    地點：{{ tcpass.location?.building.building }} {{ tcpass.location?.location }} <br>
+    UUID：{{ tcpass.uuid }}
 </div>
 <div mat-dialog-actions>
     {{ closeTime }} 秒後關閉視窗

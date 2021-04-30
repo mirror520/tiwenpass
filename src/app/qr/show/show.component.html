@@ -52,3 +52,14 @@
     </mat-card-actions>
   </mat-card>
 </div>
+
+<button mat-fab class="mat-fab-bottom-right" color="accent" 
+        [matMenuTriggerFor]="shareMenu" matTooltip="友善連結">
+  <mat-icon>bookmark</mat-icon>
+</button>
+<mat-menu #shareMenu="matMenu" yPosition="above">
+  <a mat-menu-item href="https://tcpass.taichung.gov.tw/" target="_blank">
+    <mat-icon>home</mat-icon>
+    <span>台中e指通</span>
+  </a>
+</mat-menu>

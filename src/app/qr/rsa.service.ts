@@ -11,6 +11,7 @@ import { Result } from '../model/result';
 import { Building, Location } from './models/location';
 import { Department } from '../user/model/department';
 import { Visit } from './models/visit';
+import { TcpassVisit } from './models/tcpass-visit';
 import { Follower } from './models/follower';
 import { NhiUser } from './models/nhi-user';
 
@@ -71,6 +72,18 @@ export class RsaService {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`)
     }).pipe(
       map((value: Result<Visit>) => Object.assign(new Result<Visit>(), value))
+    );
+  }
+
+  tcpassVisit(uuid: string, location_id: number): Observable<Result<TcpassVisit>> {
+    const params = {
+      'location_id': location_id
+    };
+
+    return this.http.put(this.baseUrl + `/api/v1/visits/tcpass/users/${uuid}`, params, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`)
+    }).pipe(
+      map((value: Result<TcpassVisit>) => Object.assign(new Result<TcpassVisit>(), value))
     );
   }
 

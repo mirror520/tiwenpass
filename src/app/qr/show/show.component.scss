@@ -28,3 +28,11 @@
 .spacer {
     flex: 1 1 auto;
 }
+
+.mat-fab-bottom-right {
+  position: fixed;
+  top: auto;
+  right: 20px;
+  bottom: 20px;
+  left: auto;
+}
