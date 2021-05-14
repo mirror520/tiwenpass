@@ -43,6 +43,9 @@ export class ScanComponent implements OnInit {
   currentGuest: Guest;
   nhiEnabled = false;
 
+  tcpassBarCodeCheck = new RegExp('^.[A-Z]{2}[0-9]{11}');
+  tcpassQRCodeCheck = new RegExp('^uuid=(?<uuid>.{0,})&t=');
+
   @ViewChild(ZXingScannerComponent) qrScanner: ZXingScannerComponent;
   @ViewChild(MatInput) scanner: MatInput;
 
@@ -166,12 +169,23 @@ export class ScanComponent implements OnInit {
         success = true;
       }
 
-      // Dirty Code
       if (!success) {
         uuid = result;
-        this.scanEnabled = false;
-        this.tcpassVisit(uuid);
-        return;
+        if (this.tcpassBarCodeCheck.test(result))
+          success = true;
+        else {
+          let match = result.match(this.tcpassQRCodeCheck);
+          if (match) {
+            uuid = match.groups?.uuid;
+            success = true;
+          }
+        }
+
+        if (success) {
+          this.scanEnabled = false;
+          this.tcpassVisit(uuid);
+          return
+        }
       }
     }
 
