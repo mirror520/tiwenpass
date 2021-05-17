@@ -4,17 +4,15 @@ import { IMqttMessage, IMqttServiceOptions, MqttConnectionState, MqttService as 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { environment, MQTT_SERVICE_OPTIONS } from '../../../environments/environment';
-import { UserService } from '../../user/user.service';
-import { Result } from '../../model/result';
-import { MqttUser } from './mqtt-user';
+import { environment, MQTT_SERVICE_OPTIONS } from '../../environments/environment';
+import { UserService } from '../user/user.service';
+import { User } from '../user/model/user';
+import { Result } from '../model/result';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MqttService {
-  private static _mqttUser: MqttUser;
-
   private baseUrl = environment.baseUrl;
 
   constructor(
@@ -23,18 +21,18 @@ export class MqttService {
     private userService: UserService
   ) { }
 
-  createUser(): Observable<Result<MqttUser>> {
-    return this.http.get(this.baseUrl + '/api/v1/mqtt/users', {
+  refreshMQTTUserToken(): Observable<Result<string>> {
+    return this.http.patch(this.baseUrl + '/api/v1/users/mqtt/token', null, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${this.token}`)
     }).pipe(
-      map((value: Result<MqttUser>) => Object.assign(new Result<MqttUser>(), value))
+      map((value: Result<string>) => Object.assign(new Result<string>(), value))
     );
   }
 
-  connectMqtt(user: MqttUser): Observable<string> {
+  connect(user: User): Observable<string> {
     const options: IMqttServiceOptions = MQTT_SERVICE_OPTIONS;
     options.username = `mqtt:${user.username}`;
-    options.password = user.token;
+    options.password = user.token.token;
 
     this.mqttService.connect(options);
 
@@ -55,13 +53,6 @@ export class MqttService {
     return this.mqttService.state.pipe(
       map((status: MqttConnectionState) => MqttConnectionState[status])
     );
-  }
-
-  public get mqttUser(): MqttUser {
-    return MqttService._mqttUser;
-  }
-  public set mqttUser(value: MqttUser) {
-    MqttService._mqttUser = value;
   }
 
   private get token(): string {

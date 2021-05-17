@@ -9,9 +9,11 @@ import {
   isNationalIdentificationNumberValid, 
   isResidentCertificateNumberValid 
 } from 'taiwan-id-validator2';
+import { concatMap, retry } from 'rxjs/operators';
 
 import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
 import { ScanSuccessDialogComponent } from './scan-success-dialog/scan-success-dialog.component';
+import { MqttService } from '../mqtt.service';
 import { RsaService } from '../rsa.service';
 import { UserService } from '../../user/user.service';
 import { Result } from '../../model/result';
@@ -52,6 +54,7 @@ export class ScanComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private router: Router,
+    private mqttService: MqttService,
     private rsaService: RsaService,
     private userService: UserService,
     private snackBar: MatSnackBar,
@@ -89,6 +92,15 @@ export class ScanComponent implements OnInit {
           }
         }
       }
+    });
+
+    this.mqttService.refreshMQTTUserToken().pipe(
+      retry(),
+      concatMap(() => this.mqttService.connect(this.currentUser))
+    ).subscribe({
+      next: (value) => console.log(value),
+      error: (err) => this.faultHandler(err),
+      complete: () => console.log('連線 MQTT 服務完成')
     });
   }
 
