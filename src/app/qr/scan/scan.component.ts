@@ -234,7 +234,7 @@ export class ScanComponent implements OnInit {
     this.crowdSubscription = this.mqttService.subscribeTopic(`location/${location.id}`).pipe(
       retry()
     ).subscribe({
-      next: (value) => console.log(value),
+      next: (value) => this.currentLocation.current = +value,
       error: (err) => this.faultHandler(err),
       complete: () => console.log(`訂閱 ${location.location} 地點即時人流`)
     });

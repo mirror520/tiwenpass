@@ -36,6 +36,8 @@ export class Location {
     private _id: number;
     private _location: string;
     private _building: Building;
+    private _capacity: number;
+    private _current: number;
 
     public get id(): number {
         return this._id;
@@ -59,5 +61,19 @@ export class Location {
             this._building = null;
 
         this._building = Object.assign(new Building(), value)
+    }
+
+    public get capacity(): number {
+        return this._capacity;
+    }
+    public set capacity(value: number) {
+        this._capacity = value;
+    }
+
+    public get current(): number {
+        return this._current;
+    }
+    public set current(value: number) {
+        this._current = value;
     }
 }
