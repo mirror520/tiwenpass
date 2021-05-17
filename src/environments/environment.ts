@@ -2,10 +2,19 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import { IMqttServiceOptions } from 'ngx-mqtt';
+
 export const environment = {
   production: false,
 
   baseUrl: 'https://tiwengo.linyc.idv.tw',
+};
+
+export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
+  hostname: 'mqtt.linyc.idv.tw',
+  port: 443,
+  protocol: 'wss',
+  connectOnCreate: false
 };
 
 /*
