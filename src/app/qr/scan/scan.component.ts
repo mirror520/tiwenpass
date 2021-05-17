@@ -9,6 +9,7 @@ import {
   isNationalIdentificationNumberValid, 
   isResidentCertificateNumberValid 
 } from 'taiwan-id-validator2';
+import { Subscription } from 'rxjs';
 import { concatMap, retry } from 'rxjs/operators';
 
 import { GuestRegisterDialogComponent } from './guest-register-dialog/guest-register-dialog.component';
@@ -44,6 +45,9 @@ export class ScanComponent implements OnInit {
   lastFollowers: Follower[];
   currentGuest: Guest;
   nhiEnabled = false;
+
+  mqttSubscription: Subscription;
+  crowdSubscription: Subscription;
 
   tcpassBarCodeCheck = new RegExp('^.[A-Z]{2}[0-9]{11}');
   tcpassQRCodeCheck = new RegExp('^uuid=(?<uuid>.{0,})&t=');
@@ -92,15 +96,6 @@ export class ScanComponent implements OnInit {
           }
         }
       }
-    });
-
-    this.mqttService.refreshMQTTUserToken().pipe(
-      retry(),
-      concatMap(() => this.mqttService.connect(this.currentUser))
-    ).subscribe({
-      next: (value) => console.log(value),
-      error: (err) => this.faultHandler(err),
-      complete: () => console.log('連線 MQTT 服務完成')
     });
   }
 
@@ -228,6 +223,23 @@ export class ScanComponent implements OnInit {
     });
 
     this.focusScanner();
+  }
+
+  switchCrowdTopic(location: Location) {
+    if (this.crowdSubscription) {
+      this.crowdSubscription.unsubscribe();
+      console.log(`取消訂閱即時人流`);
+    }
+
+    this.crowdSubscription = this.mqttService.subscribeTopic(`location/${location.id}`).pipe(
+      retry()
+    ).subscribe({
+      next: (value) => console.log(value),
+      error: (err) => this.faultHandler(err),
+      complete: () => console.log(`訂閱 ${location.location} 地點即時人流`)
+    });
+
+    console.log(`訂閱 ${location.location} 地點即時人流`);
   }
 
   private visitResultHandler(result: Result<Visit>) {
@@ -366,6 +378,25 @@ export class ScanComponent implements OnInit {
     this._currentLocation = value;
 
     localStorage.setItem("location_id", value.id.toString());
+
+    if (this.mqttSubscription)
+      this.switchCrowdTopic(value);
+    else {
+      this.mqttSubscription = this.mqttService.refreshMQTTUserToken().pipe(
+        retry(),
+        concatMap(() => this.mqttService.connect(this.currentUser))
+      ).subscribe({
+        next: (val) => {
+          console.log(val);
+
+          if (val === 'CONNECTED') {
+            this.switchCrowdTopic(this.currentLocation);
+          }
+        },
+        error: (err) => this.faultHandler(err),
+        complete: () => console.log('連線 MQTT 服務完成')
+      });
+    }
   }
 
   public get currentDevice(): MediaDeviceInfo {
