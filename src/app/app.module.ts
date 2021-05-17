@@ -12,9 +12,10 @@ import { QrModule } from './qr/qr.module';
 import { UserModule } from './user/user.module';
 
 import { AppComponent } from './app.component';
-
-import { environment } from '../environments/environment';
 import { CheckUpdateBottomSheetComponent } from './check-update-bottom-sheet/check-update-bottom-sheet.component';
+
+import { MqttModule } from 'ngx-mqtt';
+import { environment, MQTT_SERVICE_OPTIONS } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { CheckUpdateBottomSheetComponent } from './check-update-bottom-sheet/che
     HttpClientModule,
     MatBottomSheetModule,
     MatListModule,
+    MqttModule.forRoot(MQTT_SERVICE_OPTIONS),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     AppRoutingModule,
     QrModule,
