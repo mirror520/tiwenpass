@@ -24,7 +24,7 @@
           <mat-optgroup *ngFor="let building of buildings" 
                         [label]="building.building">
             <mat-option *ngFor="let location of building?.locations" [value]="location">
-              {{ location.location }} ({{ location.current }} < {{ location.capacity }})
+              {{ location.location }} <span *ngIf="location.capacity">( 即時人數：{{ location.current }}；容流人數：{{ location.capacity }})</span>
             </mat-option>
           </mat-optgroup>
         </mat-select>

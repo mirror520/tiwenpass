@@ -231,15 +231,17 @@ export class ScanComponent implements OnInit {
       console.log(`取消訂閱即時人流`);
     }
 
-    this.crowdSubscription = this.mqttService.subscribeTopic(`location/${location.id}`).pipe(
-      retry()
-    ).subscribe({
-      next: (value) => this.currentLocation.current = +value,
-      error: (err) => this.faultHandler(err),
-      complete: () => console.log(`訂閱 ${location.location} 地點即時人流`)
-    });
+    if (location.capacity > 0) {
+      this.crowdSubscription = this.mqttService.subscribeTopic(`location/${location.id}`).pipe(
+        retry()
+      ).subscribe({
+        next: (value) => this.currentLocation.current = +value,
+        error: (err) => this.faultHandler(err),
+        complete: () => console.log(`訂閱 ${location.location} 地點即時人流`)
+      });
 
-    console.log(`訂閱 ${location.location} 地點即時人流`);
+      console.log(`訂閱 ${location.location} 地點即時人流`);
+    }
   }
 
   private visitResultHandler(result: Result<Visit>) {
