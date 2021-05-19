@@ -9,6 +9,7 @@ export class Visit {
     private _department_employee: DepartmentEmployee;
     private _location: Location;
     private _followers: Follower[];
+    private _leave: boolean;
 
     public get id(): number {
         return this._id;
@@ -59,5 +60,12 @@ export class Visit {
         }
 
         this._followers = followers;
+    }
+
+    public get leave(): boolean {
+        return this._leave;
+    }
+    public set leave(value: boolean) {
+        this._leave = value;
     }
 }

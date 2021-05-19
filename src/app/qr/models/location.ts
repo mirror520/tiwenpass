@@ -39,6 +39,8 @@ export class Location {
     private _capacity: number;
     private _current: number;
 
+    public crowd: any[];
+
     public get id(): number {
         return this._id;
     }
@@ -75,5 +77,10 @@ export class Location {
     }
     public set current(value: number) {
         this._current = value;
+
+        this.crowd = [{
+            name: '容留百分比',
+            value: this._current
+        }];
     }
 }

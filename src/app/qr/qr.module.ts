@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { ScanComponent } from './scan/scan.component';
 import { ShowComponent } from './show/show.component';
@@ -49,6 +50,7 @@ import { ScanSuccessDialogComponent } from './scan/scan-success-dialog/scan-succ
     MatSnackBarModule,
     MatToolbarModule,
     MatTooltipModule,
+    NgxChartsModule
   ]
 })
 export class QrModule { }

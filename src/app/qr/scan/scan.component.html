@@ -24,7 +24,7 @@
           <mat-optgroup *ngFor="let building of buildings" 
                         [label]="building.building">
             <mat-option *ngFor="let location of building?.locations" [value]="location">
-              {{ location.location }} <span *ngIf="location.capacity">( 即時人數：{{ location.current }}；容流人數：{{ location.capacity }})</span>
+              {{ location.location }} <span *ngIf="location.capacity">(容留人數：{{ location.capacity }})</span>
             </mat-option>
           </mat-optgroup>
         </mat-select>
@@ -46,8 +46,8 @@
         [(device)]="currentDevice"
         [formats]="['CODE_128', 'QR_CODE']"
         (camerasFound)="onCamerasFound($event)"
-        (scanSuccess)="scanSuccessHandler($event)"
-      ></zxing-scanner>
+        (scanSuccess)="scanSuccessHandler($event)">
+      </zxing-scanner>
       <mat-form-field class="form-field">
         <mat-label>條碼輸入</mat-label>
         <input #scanner matInput type="password" (keyup.enter)="scanSuccessHandler(scanner.value)"/>
@@ -63,4 +63,13 @@
       </button>
     </mat-card-actions>
   </mat-card>
+  <div *ngIf="currentLocation" class="crowd-chart">
+    <ngx-charts-pie-grid *ngIf="currentLocation.capacity > 0"
+      label="目前人數"
+      [scheme]="chartColors"
+      [view]="[150, 150]"
+      [designatedTotal]="currentLocation.capacity"
+      [results]="currentLocation.crowd">
+    </ngx-charts-pie-grid>
+  </div>
 </div>

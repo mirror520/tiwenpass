@@ -52,6 +52,8 @@ export class ScanComponent implements OnInit {
   tcpassBarCodeCheck = new RegExp('^.[A-Z]{2}[0-9]{11}');
   tcpassQRCodeCheck = new RegExp('^uuid=(?<uuid>.{0,})&t=');
 
+  chartColors = { name: 'picnic', domain: ['#FAC51D'] };
+
   @ViewChild(ZXingScannerComponent) qrScanner: ZXingScannerComponent;
   @ViewChild(MatInput) scanner: MatInput;
 
